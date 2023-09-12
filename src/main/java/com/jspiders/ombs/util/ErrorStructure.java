@@ -1,31 +1,16 @@
 package com.jspiders.ombs.util;
 
+import java.time.LocalDateTime;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class ErrorStructure {
 	private int statusCode;
 	private String message;
 	private String rootCause;
+	private LocalDateTime dateTime;
 
-	public int getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public String getRootCause() {
-		return rootCause;
-	}
-
-	public void setRootCause(String rootCause) {
-		this.rootCause = rootCause;
-	}
 }
