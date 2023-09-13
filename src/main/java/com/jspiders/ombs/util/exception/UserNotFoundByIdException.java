@@ -1,5 +1,6 @@
 package com.jspiders.ombs.util.exception;
 
-public class UserNotFoundByIdException {
-
+public class UserNotFoundByIdException 
+{
+	
 }
