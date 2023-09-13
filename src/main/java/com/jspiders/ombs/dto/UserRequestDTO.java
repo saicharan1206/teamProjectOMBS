@@ -15,6 +15,7 @@ public class UserRequestDTO {
 	private String userPassord;
 	private String userFirstName;
 	private String userLastName;
+	
 	private String userRole;
 	
 	public String getUserFirstName() {

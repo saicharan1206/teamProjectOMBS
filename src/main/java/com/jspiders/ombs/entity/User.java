@@ -12,6 +12,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 /*
  * Entity Listeners: These are custom classes that contain callback methods annotated with JPA annotations
@@ -20,7 +21,7 @@ import jakarta.persistence.Id;
  * */
 
 
-@Entity(name = "User")
+@Entity
 /*
  * EntityListeners Annotation: This annotation is applied to an entity class to specify which entity 
  * listener classes should be invoked for that entity.
@@ -36,9 +37,19 @@ public class User {
 	private int userId;
 	private String userFirstName;
 	private String userLastName;
-	private String userRole;
 	private String userEmail;
 	private String userPassord;
+	
+	@ManyToOne
+	private UserRole role;
+
+	public UserRole getRole() {
+		return role;
+	}
+
+	public void setRole(UserRole role) {
+		this.role = role;
+	}
 
 	public String getUserFirstName() {
 		return userFirstName;
@@ -56,13 +67,6 @@ public class User {
 		this.userLastName = userLastName;
 	}
 
-	public String getUserRole() {
-		return userRole;
-	}
-
-	public void setUserRole(String userRole) {
-		this.userRole = userRole;
-	}
 
 	@CreatedDate
 	private Date createdDate;
