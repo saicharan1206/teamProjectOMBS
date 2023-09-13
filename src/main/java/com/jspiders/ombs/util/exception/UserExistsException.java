@@ -1,9 +1,9 @@
 package com.jspiders.ombs.util.exception;
 
-public class UserNotFoundByIdException {
+public class UserExistsException extends RuntimeException{
 	private String message;
 
-	public UserNotFoundByIdException(String message) {
+	public UserExistsException(String message) {
 		super();
 		this.message = message;
 	}
@@ -11,8 +11,6 @@ public class UserNotFoundByIdException {
 	public String getMessage() {
 		return message;
 	}
-
-	
 	
 
 }
