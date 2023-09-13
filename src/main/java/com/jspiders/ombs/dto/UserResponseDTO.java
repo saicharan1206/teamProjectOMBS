@@ -1,49 +1,27 @@
-package com.jspiders.ombs.entity;
+package com.jspiders.ombs.dto;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "demo_user")
-@EntityListeners(AuditingEntityListener.class)
-public class User {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserResponseDTO {
 	private int userId;
 	private String userFirstName;
 	private String userLastName;
 	private String userRole;
 	private String userEmail;
-	private String password;
-
-	@CreatedDate
 	private LocalDateTime createDate;
-	@CreatedBy
 	private String createdBy;
-
-	@LastModifiedDate
 	private LocalDateTime updatedDate;
-	@LastModifiedBy
 	private String updatedBy;
 	public int getUserId() {
-		return userId;
+		return userId; 
 	}
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-
+	public String getUserEmail() {
+		return userEmail;
+	}
+	
 	public String getUserFirstName() {
 		return userFirstName;
 	}
@@ -62,17 +40,8 @@ public class User {
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
-	public String getUserEmail() {
-		return userEmail;
-	}
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	public LocalDateTime getCreateDate() {
 		return createDate;
@@ -99,3 +68,4 @@ public class User {
 		this.updatedBy = updatedBy;
 	}
 }
+
