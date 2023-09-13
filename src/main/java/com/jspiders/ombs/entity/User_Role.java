@@ -2,7 +2,7 @@ package com.jspiders.ombs.entity;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.ManyToAny;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -14,21 +14,18 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 
 @Entity
-@Table(name = "demo_user")
+@Table(name = "user_role")
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User_Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
-	private String userFirstName;
-	private String userLastName;
-	private String userEmail;
-	private String password;
-
+	private int RoleId;
+	private String userRole;
 	@CreatedDate
 	private LocalDateTime createDate;
 	@CreatedBy
@@ -39,47 +36,23 @@ public class User {
 	@LastModifiedBy
 	private String updatedBy;
 	
-	@ManyToOne
-	private User_Role role;
+//	@OneToMany(mappedBy = "role")
+//	private List<User> user;
 
-	public int getUserId() {
-		return userId;
+	public int getRoleId() {
+		return RoleId;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setRoleId(int roleId) {
+		RoleId = roleId;
 	}
 
-	public String getUserFirstName() {
-		return userFirstName;
+	public String getUserRole() {
+		return userRole;
 	}
 
-	public void setUserFirstName(String userFirstName) {
-		this.userFirstName = userFirstName;
-	}
-
-	public String getUserLastName() {
-		return userLastName;
-	}
-
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
-	}
-
-	public String getUserEmail() {
-		return userEmail;
-	}
-
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
 	}
 
 	public LocalDateTime getCreateDate() {
@@ -114,13 +87,11 @@ public class User {
 		this.updatedBy = updatedBy;
 	}
 
-	public User_Role getRole() {
-		return role;
-	}
-
-	public void setRole(User_Role role) {
-		this.role = role;
-	}
-	
-	
+//	public List<User> getUser() {
+//		return user;
+//	}
+//
+//	public void setUser(List<User> user) {
+//		this.user = user;
+//	}
 }

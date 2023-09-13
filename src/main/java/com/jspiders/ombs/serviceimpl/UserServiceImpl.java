@@ -6,8 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.jspiders.ombs.dto.UserResponseDTO;
+import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.entity.User;
+import com.jspiders.ombs.entity.User_Role;
 import com.jspiders.ombs.repository.UserRepository;
+import com.jspiders.ombs.repository.User_RoleRepository;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.UserExistsException;
@@ -16,20 +19,38 @@ import com.jspiders.ombs.util.exception.UserExistsException;
 public class UserServiceImpl implements UserService{
 	@Autowired
 	public UserRepository repo;
+	
+	@Autowired
+	public User_RoleRepository roleRepo;
+	
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUserDetails(
-			com.jspiders.ombs.dto.UserRequestDTO userRequest) {
+			UserRequestDTO userRequest) {
 		User save;
-		User user=new User();
+		User_Role userRole1;
+			
 		if(repo.findByUserEmail(userRequest.getUserEmail())==null){
+			
+			String role = userRequest.getUserRole();
+			System.out.println(role);
+			
+			User_Role userRole = new User_Role();
+			userRole.setUserRole(role);
+			
+			User user=new User();
 			user.setUserFirstName(userRequest.getUserFirstName());
 			user.setUserLastName(userRequest.getUserLastName());
-			user.setUserRole(userRequest.getUserRole());
-			user.setUserEmail(userRequest.getUserEmail().toLowerCase());
+			user.setRole(userRole);
+			user.setUserEmail(userRequest.getUserEmail());
 			user.setPassword(userRequest.getPassword());
+
+			userRole1 = roleRepo.save(userRole);
 			save = repo.save(user);
+			
 			System.out.println(user.toString());
+			
+			userRole1.getUserRole();
 		}
 		else {
 			throw new UserExistsException("User already registered");
@@ -39,7 +60,7 @@ public class UserServiceImpl implements UserService{
 		responseDTO.setUserId(save.getUserId());
 		responseDTO.setUserFirstName(save.getUserFirstName());
 		responseDTO.setUserLastName(save.getUserLastName());
-		responseDTO.setUserRole(save.getUserRole());
+		responseDTO.setUserRole(userRole1.getUserRole());
 		responseDTO.setUserEmail(save.getUserEmail());
 		responseDTO.setCreatedBy(save.getCreatedBy());
 		responseDTO.setCreateDate(save.getCreateDate());
