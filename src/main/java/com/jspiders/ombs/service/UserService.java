@@ -1,5 +1,20 @@
 package com.jspiders.ombs.service;
 
-public class UserService {
+import org.springframework.http.ResponseEntity;
+
+import com.jspiders.ombs.dto.UserRequestDTO;
+import com.jspiders.ombs.dto.UserResponseDTO;
+import com.jspiders.ombs.util.ResponseStructure;
+
+import jakarta.validation.Valid;
+
+
+
+public interface UserService {
+	/**
+	 This method is used to save the user to the database  */
+
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveData(@Valid UserRequestDTO user);
+	
 
 }
