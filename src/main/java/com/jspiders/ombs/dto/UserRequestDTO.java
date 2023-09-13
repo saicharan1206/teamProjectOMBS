@@ -1,5 +1,7 @@
 package com.jspiders.ombs.dto;
 
+import com.jspiders.ombs.entity.UserRole;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 
@@ -7,7 +9,8 @@ public class UserRequestDTO {
 	
 	private String userFirstName;
 	private String userLastName;
-	private String userRole;
+//	private String userRole;
+	private UserRole userRole;
 
 	@Email(regexp = "[a-zA-Z0-9+_.-]+@[g][m][a][i][l]+.[c][o][m]", message = "invalid email--Should be in the extension of '@gmail.com' ")
 	private String userEmail;
@@ -37,10 +40,17 @@ public class UserRequestDTO {
 	public void setUserLastName(String userLastName) {
 		this.userLastName = userLastName;
 	}
-	public String getUserRole() {
+//	public String getUserRole() {
+//		return userRole;
+//	}
+//	public void setUserRole(String userRole) {
+//		this.userRole = userRole;
+//	}
+	public UserRole getUserRole() {
 		return userRole;
 	}
-	public void setUserRole(String userRole) {
+	public void setUserRole(UserRole userRole) {
 		this.userRole = userRole;
 	}
+	
 }

@@ -2,16 +2,20 @@ package com.jspiders.ombs.dto;
 
 import java.time.LocalDateTime;
 
+import com.jspiders.ombs.entity.UserRole;
+
 public class UserResponseDTO {
 	private int userId;
 	private String userFirstName;
 	private String userLastName;
-	private String userRole;
+//	private String userRole;
 	private String userEmail;
 	private LocalDateTime createdDate;
 	private String createdBy;
 	private LocalDateTime updatedDate;
 	private String updatedBy;
+	
+	private UserRole userRole;
 	public int getUserId() {
 		return userId;
 	}
@@ -60,10 +64,16 @@ public class UserResponseDTO {
 	public void setUserLastName(String userLastName) {
 		this.userLastName = userLastName;
 	}
-	public String getUserRole() {
+//	public String getUserRole() {
+//		return userRole;
+//	}
+//	public void setUserRole(String userRole) {
+//		this.userRole = userRole;
+//	}
+	public UserRole getUserRole() {
 		return userRole;
 	}
-	public void setUserRole(String userRole) {
+	public void setUserRole(UserRole userRole) {
 		this.userRole = userRole;
 	}
 
