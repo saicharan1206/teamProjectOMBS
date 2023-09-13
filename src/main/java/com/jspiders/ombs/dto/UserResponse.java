@@ -2,6 +2,8 @@ package com.jspiders.ombs.dto;
 
 import java.time.LocalDateTime;
 
+
+
 public class UserResponse {
 	
 	private int userId;
@@ -67,7 +69,6 @@ public class UserResponse {
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
-	
 	
 
 }

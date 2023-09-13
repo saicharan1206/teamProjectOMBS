@@ -2,31 +2,30 @@ package com.jspiders.ombs.entity;
 
 import java.time.LocalDateTime;
 
+
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.Table;
 
+
 @Entity
-@Table(name = "demo_user")
+@Table(name = "userrole")
 @EntityListeners(AuditingEntityListener.class)
-public class User {
-	
+public class UserRole {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
-	private String userFirstName;
-	private String userLastName;
-	private String userEmail;
-	private String userpassword;
+	private int id;
+	private String role;
 	@CreatedDate
 	private LocalDateTime createdDate;
 	@CreatedBy
@@ -35,40 +34,16 @@ public class User {
 	private LocalDateTime updatedDate;
 	@LastModifiedBy
 	private String updatedBy;
-	@ManyToOne
-	private UserRole userrole;
+
+//	private String userRoleName;
+//	@OneToMany(mappedBy="userrole")
+//	private List<User> users;
 	
-	public String getUserFirstName() {
-		return userFirstName;
+	public int getId() {
+		return id;
 	}
-	public void setUserFirstName(String userFirstName) {
-		this.userFirstName = userFirstName;
-	}
-	public String getUserLastName() {
-		return userLastName;
-	}
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
-	}
-	public int getUserId() {
-		return userId;
-	}
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
-	
-	public String getUserEmail() {
-		return userEmail;
-	}
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
-	
-	public String getUserpassword() {
-		return userpassword;
-	}
-	public void setUserpassword(String userpassword) {
-		this.userpassword = userpassword;
+	public void setId(int id) {
+		this.id = id;
 	}
 	public LocalDateTime getCreatedDate() {
 		return createdDate;
@@ -94,11 +69,24 @@ public class User {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-	public UserRole getUserrole() {
-		return userrole;
+	public String getRole() {
+		return role;
 	}
-	public void setUserrole(UserRole userrole) {
-		this.userrole = userrole;
+	public void setRole(String role) {
+		this.role = role;
 	}
+//	public List<User> getUsers() {
+//		return users;
+//	}
+//	public void setUsers(List<User> users) {
+//		this.users = users;
+//	}
+//	public String getUserRoleName() {
+//		return userRoleName;
+//	}
+//	public void setUserRoleName(String userRoleName) {
+//		this.userRoleName = userRoleName;
+//	}
+	
 	
 }
