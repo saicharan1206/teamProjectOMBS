@@ -37,7 +37,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		return new ResponseEntity<Object>(errors,HttpStatus.BAD_REQUEST);
 	}
 	@ExceptionHandler
-	public ResponseEntity<ErrorStructure> userAlreadyRegistered(UserExistsException exception){
+	public ResponseEntity<ErrorStructure> userAlreadyRegistered(UserAlreadyExistsException exception){
 		ErrorStructure es = new ErrorStructure();
 		es.setStatusCode(HttpStatus.NOT_FOUND.value());
 		es.setMessage(exception.getMessage());
