@@ -1,58 +1,25 @@
-package com.jspiders.ombs.entity;
+package com.jspiders.ombs.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+public class UserResponseDTO {
 
-@Entity
-@Table(name = "demo_user")
-@EntityListeners(value = { AuditingEntityListener.class })
-public class User {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userId;
-	private String firstName;
-	private String lastName;
+	private String userFirstName;
+	private String userLastName;
 	private String userRole;
 	private String userEmail;
-	private String userPassword;
-	@CreatedDate
 	private LocalDateTime createdDate;
-	@CreatedBy
 	private String createdBy;
-	@LastModifiedDate
 	private LocalDateTime lastUpdatedDate;
-	@LastModifiedBy
 	private String lastUpdatedBy;
 
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+	
+	
 
 	public LocalDateTime getCreatedDate() {
 		return createdDate;
@@ -95,19 +62,19 @@ public class User {
 	}
 
 	public String getUserFirstName() {
-		return firstName;
+		return userFirstName;
 	}
 
-	public void setUserFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setUserFirstName(String userFirstName) {
+		this.userFirstName = userFirstName;
 	}
 
 	public String getUserLastName() {
-		return lastName;
+		return userLastName;
 	}
 
-	public void setUserLastName(String lastName) {
-		this.lastName = lastName;
+	public void setUserLastName(String userLastName) {
+		this.userLastName = userLastName;
 	}
 
 	public String getUserRole() {
@@ -124,14 +91,6 @@ public class User {
 
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
-	}
-
-	public String getUserPassword() {
-		return userPassword;
-	}
-
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
 	}
 
 }
