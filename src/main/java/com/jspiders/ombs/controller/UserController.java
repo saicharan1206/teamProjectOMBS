@@ -13,6 +13,8 @@ import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -20,10 +22,9 @@ public class UserController {
 	@Autowired
 	private UserService service;
 	
-//	@CrossOrigin
+	@CrossOrigin
 	@PostMapping
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@RequestBody UserRequestDTO userRequest){
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@RequestBody @Valid UserRequestDTO userRequest){
 		return service.saveUser(userRequest);
 	}
-
 }
