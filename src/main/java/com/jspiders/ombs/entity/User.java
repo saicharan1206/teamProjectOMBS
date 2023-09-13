@@ -9,6 +9,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -18,9 +19,11 @@ public class User extends Audit<String> {
 	private int ID;
 	private String userFirstName;
 	private String userLastName;
-	private String userRole;
+	//private String userRole;
 	private String email;
 	private String password;
+	@ManyToOne
+	private UserRole userRole;
 	public int getID() {
 		return ID;
 	}
@@ -39,12 +42,6 @@ public class User extends Audit<String> {
 	public void setUserLastName(String userLastName) {
 		this.userLastName = userLastName;
 	}
-	public String getUserRole() {
-		return userRole;
-	}
-	public void setUserRole(String userRole) {
-		this.userRole = userRole;
-	}
 	public String getEmail() {
 		return email;
 	}
@@ -56,6 +53,12 @@ public class User extends Audit<String> {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public UserRole getUserRole() {
+		return userRole;
+	}
+	public void setUserRole(UserRole userRole) {
+		this.userRole = userRole;
 	}
 	
 

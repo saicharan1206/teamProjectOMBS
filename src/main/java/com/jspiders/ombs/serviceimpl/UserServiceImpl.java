@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.User;
+import com.jspiders.ombs.entity.UserRole;
 import com.jspiders.ombs.repository.UserRepository;
+import com.jspiders.ombs.repository.UserRoleRepository;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.EmailAlreadyExistsException;
@@ -22,43 +24,71 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
     UserRepository repo;
-	@Override
 	
+	@Autowired
+	UserRoleRepository roles;
+	public void assigningRole(UserRequestDTO request) {
+		String email = request.getEmail().toLowerCase();
+		String roleType = request.getUserRole().toLowerCase();
+		User user = new User();
+		user.setUserFirstName(request.getUserFirstName());
+		user.setUserLastName(request.getUserLastName());		
+		user.setEmail(email);
+		user.setPassword(request.getPassword());
+    	UserRole userRole = new UserRole();
+    	userRole.setUserRole(roleType);
+    	user.setUserRole(userRole);
+    	roles.save(userRole);
+    	repo.save(user);
+	}
+	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO request) {
 		String email = request.getEmail().toLowerCase();
-		User user = new User();
-		List<User> list = repo.findAll();
-		boolean flag = true;
-            if(!list.isEmpty()) {
-            	for(int i=0; i<=list.size()-1; i++) {
-    				if(list.get(i).getEmail().equalsIgnoreCase(email)) {
-    					flag = false;	
+		String roleType = request.getUserRole().toLowerCase();
+		
+		List<User> userlist = repo.findAll();
+		List<UserRole> rolelist = roles.getAllUserRole();
+            if(!userlist.isEmpty()) {
+            	for(int i=0; i<=userlist.size()-1; i++) {
+    				if(userlist.get(i).getEmail().equalsIgnoreCase(email)) {
+    					throw new EmailAlreadyExistsException( email, " User cannot be saved" );	
     				}
+    				
     			}	
             }
+                boolean flag = true;
+            	if(!rolelist.isEmpty()) {
+            		for(int i=0; i<=rolelist.size()-1;i++) {
+            			if(rolelist.get(i).getUserRole().equalsIgnoreCase(roleType)) {
+            			
+            				User user = new User();
+            				user.setUserFirstName(request.getUserFirstName());
+        					user.setUserLastName(request.getUserLastName());		
+        					user.setEmail(email);
+        					user.setPassword(request.getPassword());
+        	            	user.setUserRole(rolelist.get(i));
+        	            	repo.save(user);
+            				flag=false;
+            			}	
+            		}
+            		
+            		if(flag==true) {
+            			assigningRole( request)	;
+
+            		}
+         
+	            }
+            	else  {
+            		assigningRole( request)	;
+            		}
             ResponseStructure<UserResponseDTO> structure = new ResponseStructure<>();
-			if(flag == true) {
-				user.setUserFirstName(request.getUserFirstName());
-				user.setUserLastName(request.getUserLastName());
-				user.setUserRole(request.getUserRole());
-				user.setEmail(email);
-				user.setPassword(request.getPassword());
-			
-				repo.save(user);
-				
-				UserResponseDTO response = new UserResponseDTO();
+	            UserResponseDTO response = new UserResponseDTO();
 				response.setMessage("Email saved sucessfully");
 				
 				
 				structure.setStatusCode(HttpStatus.CREATED.value());
 				structure.setMessage("Email saved sucessfully");
 				structure.setData(response);
-				
-				
-			}
-			else {
-				throw new EmailAlreadyExistsException( email, " User cannot be saved" );
-			}
 
 		return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure,HttpStatus.CREATED );
 	}
@@ -72,15 +102,11 @@ public class UserServiceImpl implements UserService {
 			user1.setID(userId);
 			user1.setUserFirstName(request.getUserFirstName());
 			user1.setUserLastName(request.getUserLastName());
-			user1.setUserRole(request.getUserRole());
 			user1.setEmail(request.getEmail());
 			user1.setPassword(request.getPassword());
 			repo.save(user1);
-			
 			UserResponseDTO response = new UserResponseDTO();
 			response.setMessage("Updated sucessfully");
-			
-			
 			structure.setStatusCode(HttpStatus.OK.value());
 			structure.setMessage("Data updated successfully");
 			structure.setData(response);

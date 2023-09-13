@@ -1,5 +1,7 @@
 package com.jspiders.ombs.dto;
 
+import com.jspiders.ombs.entity.UserRole;
+
 public class UserRequestDTO {
 	private String userFirstName;
 	private String userLastName;

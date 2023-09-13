@@ -5,12 +5,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.UserRole;
 
-
-public interface UserRepository extends JpaRepository<User, Integer> {
-	
-
+public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
+	@Query("select r  from UserRole r")
+	public List<UserRole> getAllUserRole();
 
 }
