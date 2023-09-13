@@ -3,6 +3,7 @@ package com.jspiders.ombs.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public class UserRequestDTO {
 	
@@ -10,12 +11,17 @@ public class UserRequestDTO {
 	private String userFirstName;
 	private String userLastName;
 	@NotBlank(message = "User Role cannot be Null!!")
-	private String userRole;
+	
 	@NotBlank(message = "User Email cannot be Blank!!")
-	@Email(regexp = "[a-zA-Z0-9+_.-]+@[g][m][a][i][l]+.[c][o][m]", 
-		   message = "invalid! -> Email Should be in the extension of '@gmail.com' ")
+	@Email(regexp = "[a-zA-Z0-9+_.-]+@[g][m][a][i][l]+.[c][o][m]",
+		message = "invalid! -> Email Should be in the extension of '@gmail.com' ")
 	private String userEmail;
+	
+	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", 
+			message = "8 characters mandatory(1 upperCase,1 lowerCase,1 special Character,1 number)") 
 	private String userPassword;
+	
+	private String userRole;
 	
 	public String getUserFirstName() {
 		return userFirstName;

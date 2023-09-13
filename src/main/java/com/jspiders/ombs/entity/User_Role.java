@@ -3,7 +3,6 @@ package com.jspiders.ombs.entity;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -15,21 +14,15 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "demo_user")
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User_Role {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
-	private String userFirstName;
-	private String userLastName;
-	private String userEmail;
-	private String userPassword;
+	private int userRoleId;
+	private String userRoleName;
 	
 	@CreatedDate
 	private Date createdDate;
@@ -40,28 +33,17 @@ public class User {
 	@LastModifiedBy
 	private String updatedBy;
 	
-	@ManyToOne
-	private User_Role userRole;
-	
-	
-	
-	public User_Role getUserRole() {
-		return userRole;
+	public int getUserRoleId() {
+		return userRoleId;
 	}
-	public void setUserRole(User_Role userRole) {
-		this.userRole = userRole;
+	public void setUserRoleId(int userRoleId) {
+		this.userRoleId = userRoleId;
 	}
-	public String getUserEmail() {
-		return userEmail;
+	public String getUserRoleName() {
+		return userRoleName;
 	}
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
-	public String getUserPassword() {
-		return userPassword;
-	}
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
+	public void setUserRoleName(String userRoleName) {
+		this.userRoleName = userRoleName;
 	}
 	public Date getCreatedDate() {
 		return createdDate;
@@ -87,28 +69,25 @@ public class User {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-	public int getUserId() {
-		return userId;
-	}
-	public String getUserFirstName() {
-		return userFirstName;
-	}
-	public void setUserFirstName(String userFirstName) {
-		this.userFirstName = userFirstName;
-	}
-	public String getUserLastName() {
-		return userLastName;
-	}
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
-	}
-	public void setUserId(int userId) {
-		this.userId = userId;
+	@Override
+	public String toString() {
+		return "User_Role [userRoleId=" + userRoleId + ", userRoleName=" + userRoleName + ", createdDate=" + createdDate
+				+ ", createdBy=" + createdBy + ", updatedDate=" + updatedDate + ", updatedBy=" + updatedBy + "]";
 	}
 	
 }
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
