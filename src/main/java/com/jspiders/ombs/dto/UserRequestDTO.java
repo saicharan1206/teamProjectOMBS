@@ -3,9 +3,11 @@ package com.jspiders.ombs.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public class UserRequestDTO {
 
+	@NotBlank
 	@NotNull(message = "First name field should not be empty")
 	private String userFirstName;
 	
@@ -20,6 +22,8 @@ public class UserRequestDTO {
 			message = "invalid email--Should be in the extension of '@gmail.com' ")
 	private String userEmail;
 	
+	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", 
+			message = "8 characters mandatory(1 upperCase,1 lowerCase,1 special Character,1 number)")
 	private String userPassword;
 	
 	public String getUserFirstName() {

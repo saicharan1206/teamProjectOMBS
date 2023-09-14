@@ -27,7 +27,6 @@ public class User {
 	private String userLastName;
 	private String userEmail;
 	private String userPassword;
-//	private String userRole;
 	
 	@ManyToOne
 	private Role userRole;
