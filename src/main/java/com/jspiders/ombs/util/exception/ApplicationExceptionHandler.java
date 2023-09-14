@@ -20,4 +20,24 @@ public class ApplicationExceptionHandler {
 		
 		return new ResponseEntity<ErrorStructure>(errorStructure,HttpStatus.NOT_ACCEPTABLE);
 	}
+	
+	@ExceptionHandler(EmailNotFoundException.class)
+	public ResponseEntity<ErrorStructure> emailNotFound(EmailNotFoundException enf) {
+		ErrorStructure errorStructure = new ErrorStructure();
+		errorStructure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		errorStructure.setRootCause("email not present in database");
+		errorStructure.setMessage(enf.getMessage());
+		
+		return new ResponseEntity<ErrorStructure>(errorStructure,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(PasswordMismatchException.class)
+	public ResponseEntity<ErrorStructure> passwordMismatch(PasswordMismatchException pmm) {
+		ErrorStructure errorStructure = new ErrorStructure();
+		errorStructure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		errorStructure.setRootCause("This Password Does Not Match with any passwords in database");
+		errorStructure.setMessage(pmm.getMessage());
+		
+		return new ResponseEntity<ErrorStructure>(errorStructure,HttpStatus.NOT_FOUND);
+	}
 }

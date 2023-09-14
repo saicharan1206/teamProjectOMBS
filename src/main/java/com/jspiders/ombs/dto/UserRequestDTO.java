@@ -1,5 +1,7 @@
 package com.jspiders.ombs.dto;
 
+import com.jspiders.ombs.entity.UserRole;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -11,9 +13,10 @@ public class UserRequestDTO {
 	@NotBlank(message = "LastName required")
 	private String userLastName;
 	
-	@NotBlank(message = "Role required")
 	private String userRole;
 	
+	//private UserRole userRole;
+
 	@NotBlank(message = "email required")
 	@Email(message = "email not correct")
 	private String email;
@@ -37,14 +40,6 @@ public class UserRequestDTO {
 		this.userLastName = userLastName;
 	}
 
-	public String getUserRole() {
-		return userRole;
-	}
-
-	public void setUserRole(String userRole) {
-		this.userRole = userRole;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -60,5 +55,23 @@ public class UserRequestDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+//	public UserRole getUserRole() {
+//		return userRole;
+//	}
+//
+//	public void setUserRole(UserRole userRole) {
+//		this.userRole = userRole;
+//	}
+
+	public String getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
+	}
+	
+	
 	
 }

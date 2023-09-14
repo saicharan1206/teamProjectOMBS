@@ -40,6 +40,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
@@ -51,7 +52,6 @@ public class User {
 	private Integer userId;
 	private String userFirstName;
 	private String userLastName;
-	private String userRole;
 	private String email;
 	private String password;
 	
@@ -63,30 +63,33 @@ public class User {
 	private Date  createdDate;
 	private Date updatedDate;
 	private String updatedBy;
+	
+	@ManyToOne
+	private UserRole userRole;
+	
+
 	public Integer getUserId() {
 		return userId;
 	}
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
+	
 	public String getUserFirstName() {
 		return userFirstName;
 	}
 	public void setUserFirstName(String userFirstName) {
 		this.userFirstName = userFirstName;
 	}
+	
 	public String getUserLastName() {
 		return userLastName;
 	}
+	
 	public void setUserLastName(String userLastName) {
 		this.userLastName = userLastName;
 	}
-	public String getUserRole() {
-		return userRole;
-	}
-	public void setUserRole(String userRole) {
-		this.userRole = userRole;
-	}
+	
 	public String getEmail() {
 		return email;
 	}
@@ -122,5 +125,12 @@ public class User {
 	}
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
+	}
+	
+	public UserRole getUserRole() {
+		return userRole;
+	}
+	public void setUserRole(UserRole userRole) {
+		this.userRole = userRole;
 	}
 }
