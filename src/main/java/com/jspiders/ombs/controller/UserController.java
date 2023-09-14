@@ -15,6 +15,7 @@ import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 
@@ -27,16 +28,26 @@ public class UserController {
 	
 	@CrossOrigin
 	@PostMapping
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@RequestBody @Valid UserRequestDTO userRequestDTO){
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@RequestBody @Valid UserRequestDTO userRequestDTO) throws MessagingException{
 		return userService.saveUser(userRequestDTO);
 	}
 	
-//	@CrossOrigin
+	@CrossOrigin
 //	@PostMapping("/login") // for UI
 	@GetMapping
 	public ResponseEntity<ResponseStructure<String>> login(@RequestParam String email, String password){
 		return userService.userLogin(email, password);
 	}
 	
+	@CrossOrigin
+	@PostMapping("/changePassword")
+	public ResponseEntity<String> changePassword(@RequestParam String email) throws MessagingException{
+		return userService.changePassword(email);
+	}
+	
 
 }
+
+
+
+

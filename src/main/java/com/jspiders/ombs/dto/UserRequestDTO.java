@@ -7,10 +7,11 @@ import jakarta.validation.constraints.Pattern;
 
 public class UserRequestDTO {
 	
-	@NotNull(message = "User Name cannot be Null!!")
+	@NotBlank(message = "User First Name cannot be Blank!!")
+	@NotNull(message = "User First Name cannot be Null!!")
 	private String userFirstName;
 	private String userLastName;
-	@NotBlank(message = "User Role cannot be Null!!")
+	
 	
 	@NotBlank(message = "User Email cannot be Blank!!")
 	@Email(regexp = "[a-zA-Z0-9+_.-]+@[g][m][a][i][l]+.[c][o][m]",
@@ -21,6 +22,8 @@ public class UserRequestDTO {
 			message = "8 characters mandatory(1 upperCase,1 lowerCase,1 special Character,1 number)") 
 	private String userPassword;
 	
+	@NotBlank(message = "User Role cannot be Blank!!")
+	@NotNull(message = "User Role cannot be Null!!")
 	private String userRole;
 	
 	public String getUserFirstName() {
