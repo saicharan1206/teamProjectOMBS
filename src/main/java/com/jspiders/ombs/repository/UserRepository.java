@@ -10,7 +10,8 @@ import com.jspiders.ombs.entity.UserRole;
 
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-	
+	@Query("select r.email from User r where email=?1")
+	public String getUserByEmail(String email);
 
 
 }
