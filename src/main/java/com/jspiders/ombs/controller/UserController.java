@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jspiders.ombs.dto.ForgetEmailResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
@@ -33,5 +34,9 @@ public class UserController {
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(@PathVariable String email,
 			@PathVariable String password) {
 		return service.getUser(email, password);
+	}
+	@GetMapping("/getemail/{email}")
+	public ResponseEntity<ResponseStructure<ForgetEmailResponse>> getEmail(@PathVariable String email) {
+		return service.getEmail(email);
 	}
 }

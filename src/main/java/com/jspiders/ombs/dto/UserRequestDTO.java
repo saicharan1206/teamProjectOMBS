@@ -12,4 +12,5 @@ public class UserRequestDTO {
 	private String userFirstName;
 	private String userLastName;
 	private String userRole;
+	
 }
