@@ -43,4 +43,5 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		es.setRootCause("User Already Registered!!!");
 		return new ResponseEntity<ErrorStructure>(es, HttpStatus.NOT_FOUND);
 	}
+	
 }

@@ -48,6 +48,6 @@ public class UserRequestDTO {
 		this.userRole = userRole;
 	}
     	
-	
+
 }
 
