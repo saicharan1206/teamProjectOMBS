@@ -1,5 +1,12 @@
 package com.jspiders.ombs.repository;
 
-public class UserRepository {
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.jspiders.ombs.entity.User;
+
+
+public interface UserRepository extends JpaRepository<User, Integer> {
+	public User findByEmail(String userEmail);
+//	public User findByUserPassword(String userPassword);
 }
