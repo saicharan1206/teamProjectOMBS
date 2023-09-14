@@ -7,4 +7,5 @@ import com.jspiders.ombs.util.ResponseStructure;
 
 public interface UserService {	
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO userRequest);
+	public ResponseEntity<ResponseStructure<String>> logInUser(String email, String password);
 }

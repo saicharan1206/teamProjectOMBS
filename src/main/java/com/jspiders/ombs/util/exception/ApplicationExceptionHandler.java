@@ -61,4 +61,14 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		
 		return new ResponseEntity<ErrorStructure>(error , HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> userEmailNotExists(UserNotFoundByEmailException exp){
+		ErrorStructure error = new ErrorStructure();
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setMessage(exp.getMessage());
+		error.setRootCause("Email not exists!!");
+		
+		return new ResponseEntity<ErrorStructure>(error , HttpStatus.NOT_FOUND);
+	}
 }

@@ -8,6 +8,7 @@ public class TeamProjectOmbsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TeamProjectOmbsApplication.class, args);
+		System.out.println("Now, You are ready to go...");
 	}
 
 }
