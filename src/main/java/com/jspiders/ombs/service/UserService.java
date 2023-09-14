@@ -12,4 +12,6 @@ public interface UserService {
 
 	ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@Valid UserRequestDTO requestDTO);
 
+	ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(String email, String password);
+
 }

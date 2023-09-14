@@ -36,8 +36,19 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		return new ResponseEntity<Object>(errors,HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler
+	@ExceptionHandler(UserNotFoundByIdException.class)
 	public ResponseEntity<ErrorStructure> saveUser(UserNotFoundByIdException exception, HttpServletRequest request)
+	{
+		ErrorStructure structure = new ErrorStructure();
+		structure.setMessage(exception.getMessage());
+		structure.setRootCause(request.getRequestURI());
+		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_FOUND); 
+	}
+	
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorStructure> saveUser(UserNotFoundException exception, HttpServletRequest request)
 	{
 		ErrorStructure structure = new ErrorStructure();
 		structure.setMessage(exception.getMessage());

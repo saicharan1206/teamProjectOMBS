@@ -3,6 +3,8 @@ package com.jspiders.ombs.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +27,11 @@ public class UserController {
 	{
 		return service.saveUser(requestDTO);
 		
+	}
+	
+	@GetMapping("/getuser/{email}/{password}")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(@PathVariable String email,
+			@PathVariable String password) {
+		return service.getUser(email, password);
 	}
 }
