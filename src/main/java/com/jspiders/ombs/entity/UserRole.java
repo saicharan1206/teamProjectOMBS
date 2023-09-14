@@ -6,28 +6,22 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name="users")
-public class User {
+@Table(name="Role")
+public class UserRole {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
-	private String userFirstName;
-	private String userLastName;
-	private String emailAddress;
-	private String Password;
+	private int roleId;
+	private String roleName;
+
 	@Column(name = "created_date")
 	@CreatedDate
 	private LocalDateTime createdDate;
@@ -40,87 +34,40 @@ public class User {
 	@Column(name = "updatedBy")
 	@LastModifiedBy
 	private String updatedBy;
-	@ManyToOne
-	private UserRole userRole;
-
-	public int getUserId() {
-		return userId;
+	public int getRoleId() {
+		return roleId;
 	}
-
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setRoleId(int roleId) {
+		this.roleId = roleId;
 	}
-
-	public String getEmailAddress() {
-		return emailAddress;
+	public String getRoleName() {
+		return roleName;
 	}
-
-	public void setEmailAddress(String emailAddress) {
-		this.emailAddress = emailAddress;
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
 	}
-
-	public String getPassword() {
-		return Password;
-	}
-
-	public void setPassword(String password) {
-		Password = password;
-	}
-
 	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
-
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
-
 	public String getCreatedBy() {
 		return createdBy;
 	}
-
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
-
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
-
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
-
 	public String getUpdatedBy() {
 		return updatedBy;
 	}
-
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-
-	public String getUserFirstName() {
-		return userFirstName;
-	}
-
-	public void setUserFirstName(String userFirstName) {
-		this.userFirstName = userFirstName;
-	}
-
-	public String getUserLastName() {
-		return userLastName;
-	}
-
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
-	}
-
-	public UserRole getUserRole() {
-		return userRole;
-	}
-
-	public void setUserRole(UserRole userRole) {
-		this.userRole = userRole;
-	}
-	
 }
