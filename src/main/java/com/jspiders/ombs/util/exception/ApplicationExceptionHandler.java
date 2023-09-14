@@ -25,5 +25,31 @@ public class ApplicationExceptionHandler
 		
 		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler(UserNotFoundByEmailException.class)
+	public ResponseEntity<?> handleUserNotFoundByEmailException(UserNotFoundByEmailException exception,HttpServletRequest request)
+	{
+		ErrorStructure error=new ErrorStructure();
+		error.setMessage(exception.getMessage());
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setRootCause(request.getRequestURI());
+		error.setDateTime(LocalDateTime.now());
+		
+		
+		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(InvalidPasswordException.class)
+	public ResponseEntity<?> handleInvalidPasswordException(InvalidPasswordException exception,HttpServletRequest request)
+	{
+		ErrorStructure error=new ErrorStructure();
+		error.setMessage(exception.getMessage());
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setRootCause(request.getRequestURI());
+		error.setDateTime(LocalDateTime.now());
+		
+		
+		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+	}
 
 }
