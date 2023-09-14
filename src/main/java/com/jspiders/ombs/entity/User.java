@@ -15,6 +15,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity(name = "demo_User")
 @EntityListeners(AuditingEntityListener.class)
@@ -35,7 +36,9 @@ public class User {
 	private LocalDate updatedDate = null;
 	@LastModifiedBy
 	private String updatedBy;
-
+    @ManyToOne
+	private User_Role userRloe;
+	
 	public int getUserId() {
 		return userId;
 	}
@@ -114,6 +117,14 @@ public class User {
 
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
+	}
+
+	public User_Role getUserRloe() {
+		return userRloe;
+	}
+
+	public void setUserRloe(User_Role userRloe) {
+		this.userRloe = userRloe;
 	}
 
 }
