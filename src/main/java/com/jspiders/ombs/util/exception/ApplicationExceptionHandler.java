@@ -13,10 +13,22 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler
+	@ExceptionHandler(UserAlreadyExist.class)
 	public ResponseEntity<ErrorStructure> saveUser(UserAlreadyExist alreadyExist, HttpServletRequest httpServletRequest){
 		ErrorStructure error = new ErrorStructure();
 		error.setMessage(alreadyExist.getMessage());
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setRootCause(httpServletRequest.getRequestURI());
+		
+		
+		return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+		
+	}
+	
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorStructure> saveUser(UserNotFoundException usernotfound, HttpServletRequest httpServletRequest){
+		ErrorStructure error = new ErrorStructure();
+		error.setMessage(usernotfound.getMessage());
 		error.setStatusCode(HttpStatus.NOT_FOUND.value());
 		error.setRootCause(httpServletRequest.getRequestURI());
 		
