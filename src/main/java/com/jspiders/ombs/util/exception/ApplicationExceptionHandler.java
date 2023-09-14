@@ -44,4 +44,13 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		es.setRootCause("User Already Registered!!!");
 		return new ResponseEntity<ErrorStructure>(es, HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> userNotFoundException(UserNotFoundException exception){
+		ErrorStructure es = new ErrorStructure();
+		es.setStatusCode(HttpStatus.NOT_FOUND.value());
+		es.setMessage(exception.getMessage());
+		es.setRootCause("mismatch credentials");
+		return new ResponseEntity<ErrorStructure>(es, HttpStatus.NOT_FOUND);
+	}
 }
