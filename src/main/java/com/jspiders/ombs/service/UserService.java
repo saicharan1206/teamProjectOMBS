@@ -9,4 +9,6 @@ import com.jspiders.ombs.util.ResponseStructure;
 public interface UserService {
 	
 	public ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequestDTO userRequest);
+	
+	public ResponseEntity<ResponseStructure<UserResponse>> userlogin(UserRequestDTO userRequest);
 }

@@ -7,6 +7,7 @@ import com.jspiders.ombs.entity.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
 	
 	public User findByUserEmail(String userEmail);
+	public User findByUserPassord (String userPassord);
 
 }
  

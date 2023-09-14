@@ -16,40 +16,39 @@ import com.jspiders.ombs.repository.UserRoleRepositary;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.EmailException;
+import com.jspiders.ombs.util.exception.EmailNotFoundException;
+import com.jspiders.ombs.util.exception.PasswordNotMatchingExceeption;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepo;
-	
+
 	@Autowired
 	private UserRoleRepositary roleRepo;
-	
-	
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequestDTO userRequest) {
 
 		User user1;
 		User user = new User();
-		UserRole  userRole = new UserRole();
-		
+		UserRole userRole = new UserRole();
+
 		if (userRepo.findByUserEmail(userRequest.getUserEmail()) == null) {
 			userRole = roleRepo.getUserRoleByRole(userRequest.getUserRole());
 			System.out.println(userRole);
-			if(userRole == null) {
-			  userRole = new UserRole();
-			  userRole.setUserRole(userRequest.getUserRole());
+			if (userRole == null) {
+				userRole = new UserRole();
+				userRole.setUserRole(userRequest.getUserRole());
 				roleRepo.save(userRole);
 			}
-
 			user.setUserEmail(userRequest.getUserEmail().toLowerCase());
 			user.setUserPassord(userRequest.getUserPassord());
 			user.setUserFirstName(userRequest.getUserFirstName());
 			user.setUserLastName(userRequest.getUserLastName());
 			user.setRole(userRole);
-			 userRepo.save(user);
+			userRepo.save(user);
 		} else {
 			throw new EmailException("email is already Present");
 		}
@@ -64,7 +63,29 @@ public class UserServiceImpl implements UserService {
 		return new ResponseEntity<ResponseStructure<UserResponse>>(structure, HttpStatus.OK);
 	}
 
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> userlogin(UserRequestDTO userRequest) {
+		User user = null;
+		 user = userRepo.findByUserEmail(userRequest.getUserEmail());
+		if (user != null) {
+			if (user.getUserPassord().equals(userRequest.getUserPassord())) {
+				
+				UserResponse response = new UserResponse();
+				response.setUserId(user.getUserId());
+				response.setUserFirstName(user.getUserFirstName());
+				response.setUserLastName(user.getUserLastName());
+				response.setRole(user.getRole());
+				ResponseStructure<UserResponse> structure = new ResponseStructure<UserResponse>();
+				structure.setStatusCode(HttpStatus.FOUND.value());
+				structure.setMessage("Loign succssfully");
+				structure.setData(response);
+				return new ResponseEntity<ResponseStructure<UserResponse>>(structure, HttpStatus.FOUND);
+				
+			} else {
+				throw new PasswordNotMatchingExceeption("Password is not matching");
+			}
+		} else {
+			throw new EmailNotFoundException("Email is not found");
+		}
+	}
 }
-
-	
-
