@@ -43,8 +43,6 @@ public class User {
 	@ManyToOne
 	private User_Role userRole;
 	
-	
-	
 	public User_Role getUserRole() {
 		return userRole;
 	}
@@ -104,6 +102,18 @@ public class User {
 	}
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", userFirstName=" + userFirstName + ", userLastName=" + userLastName
+				+ ", userEmail=" + userEmail + ", userPassword=" + userPassword + ", createdDate=" + createdDate
+				+ ", createdBy=" + createdBy + ", updatedDate=" + updatedDate + ", updatedBy=" + updatedBy
+				+ ", userRole=" + userRole + ", getUserRole()=" + getUserRole() + ", getUserEmail()=" + getUserEmail()
+				+ ", getUserPassword()=" + getUserPassword() + ", getCreatedDate()=" + getCreatedDate()
+				+ ", getCreatedBy()=" + getCreatedBy() + ", getUpdatedDate()=" + getUpdatedDate() + ", getUpdatedBy()="
+				+ getUpdatedBy() + ", getUserId()=" + getUserId() + ", getUserFirstName()=" + getUserFirstName()
+				+ ", getUserLastName()=" + getUserLastName() + ", getClass()=" + getClass() + ", hashCode()="
+				+ hashCode() + ", toString()=" + super.toString() + "]";
 	}
 	
 }
