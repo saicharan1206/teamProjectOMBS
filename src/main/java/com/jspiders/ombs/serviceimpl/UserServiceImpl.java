@@ -1,10 +1,15 @@
 package com.jspiders.ombs.serviceimpl;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.jspiders.ombs.dto.ForgotEmailResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.User;
@@ -16,6 +21,7 @@ import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.UserAlreadyExist;
 import com.jspiders.ombs.util.exception.UserNotFoundException;
 
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,6 +29,8 @@ public class UserServiceImpl implements UserService {
 	private UserRepository repo;
 	@Autowired
 	private UserRoleRepository repository;
+	@Autowired
+	private JavaMailSender javaMailSender;
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO request) {
@@ -42,13 +50,23 @@ public class UserServiceImpl implements UserService {
 			user.setUserFirstName(request.getUserFirstName());
 			user.setUserLastName(request.getUserLastName());
 			user.setRole(role);
-			//role2.getUser().add(user);
 			repository.save(role);
 			save = repo.save(user);
+			
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(save.getUserEmail());
+			message.setSubject("Account created sucessfully");
+			message.setText("account created sucessfully with "+save.getRole().getRole()+"\n\n Thanks & Regards"+save.getCreatedBy());
+			message.setSentDate(new Date());
+			
+			javaMailSender.send(message);
+			
 
 		} catch (Exception e) {
 			throw new UserAlreadyExist("user already exits");
 		}
+		
+		
 
 		UserResponseDTO response = new UserResponseDTO();
 		response.setUserId(save.getUserId());
@@ -92,4 +110,31 @@ public class UserServiceImpl implements UserService {
 
 		throw new UserNotFoundException("user not found");
 	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> sendforgotemail(String email) {
+		User userEmail = repo.findByUserEmail(email);
+		if(userEmail !=null) {
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(userEmail.getUserEmail());
+			message.setSubject("password change");
+			message.setText("click below email to change the password "+"\n\n Thanks & Regards"+"\n"+userEmail.getCreatedBy());
+			message.setSentDate(new Date());
+			
+			javaMailSender.send(message);
+			
+			ForgotEmailResponse emailResponse = new ForgotEmailResponse();
+			emailResponse.setUserName(userEmail.getUserEmail());
+			emailResponse.setCreatedby(userEmail.getCreatedBy());
+			
+			ResponseStructure<ForgotEmailResponse> responseStructure = new ResponseStructure<>();
+			responseStructure.setData(emailResponse);
+			responseStructure.setStatusCode(HttpStatus.OK.value());
+			return new ResponseEntity(responseStructure, HttpStatus.OK);
+		}
+		
+		throw new UserNotFoundException("no user with name"+email);
+	}
+
+	
 }

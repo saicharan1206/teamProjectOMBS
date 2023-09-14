@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jspiders.ombs.dto.ForgotEmailResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
+
+import jakarta.mail.MessagingException;
 
 @RestController
 @CrossOrigin
@@ -33,4 +36,13 @@ public class UserController {
 			@PathVariable String password) {
 		return service.getUser(email, password);
 	}
+	
+	@GetMapping("/sendemail/{email}")
+	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> sendforgotemail(@PathVariable String email){
+		return service.sendforgotemail(email);
+	}
+	
+	
+	
+	
 }
