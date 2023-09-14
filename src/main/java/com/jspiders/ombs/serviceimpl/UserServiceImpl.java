@@ -178,7 +178,7 @@ public class UserServiceImpl implements UserService {
 			return new ResponseEntity<String>("Mail sent successfully!!!",HttpStatus.OK);
 		}
 		
-		throw new UserNotFoundByEmailException(email+" is invalid, Please enter valid Email!!!");
+		throw new UserNotFoundByEmailException(email+" is invalid, Please enter valid Email!!!"); 
 	}
 
 	
