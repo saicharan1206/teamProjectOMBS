@@ -48,6 +48,16 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler
 		structure.setRootCause("User email is already exists");
 		return new ResponseEntity<ErrorStructure> (structure, HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> UserDoesNotExistException(UserDoesNotExistException ex)
+	{
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		structure.setMessage(ex.getMessage());
+		structure.setRootCause("User email/password does not exists");
+		return new ResponseEntity<ErrorStructure> (structure, HttpStatus.NOT_FOUND);
+	}
 
 
 }
