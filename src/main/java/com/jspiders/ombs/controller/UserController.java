@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jspiders.ombs.dto.ForgotRequest;
 import com.jspiders.ombs.dto.LoginRequest;
 import com.jspiders.ombs.dto.LoginResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
@@ -38,6 +40,12 @@ public class UserController {
 	public ResponseEntity<ResponseStructure<LoginResponse>> loginUser(@RequestBody LoginRequest login)
 	{
 		return service.loginUser(login);
+	}
+	
+	@PostMapping("/forgotpassword")
+	public ResponseEntity<String> forgotPassword(@RequestBody ForgotRequest forgot)
+	{
+		return service.forgotPassword(forgot);
 	}
 
 }

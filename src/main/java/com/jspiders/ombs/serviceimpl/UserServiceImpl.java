@@ -1,12 +1,17 @@
 package com.jspiders.ombs.serviceimpl;
 
+import java.sql.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.jspiders.ombs.dto.ForgotRequest;
 import com.jspiders.ombs.dto.LoginRequest;
 import com.jspiders.ombs.dto.LoginResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
@@ -19,6 +24,9 @@ import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.UserAlreadyExistException;
 import com.jspiders.ombs.util.exception.UserDoesNotExistException;
+import com.jspiders.ombs.util.exception.WrongPasswordException;
+
+import jakarta.mail.internet.MimeMessage;
 
 
 @Service
@@ -28,6 +36,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserRoleRepo userRoleRepo;
+	
+	@Autowired
+	private JavaMailSender javaMailSender;
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveData(UserRequestDTO user) {
@@ -51,6 +62,17 @@ public class UserServiceImpl implements UserService {
 			else {
 				user2.setUserRole(userRole);
 			}
+			
+			String userEmail = user.getUserEmail(); 
+            SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(userEmail);
+			message.setSubject("Account Creation sucessfully");
+			message.setText("Hai " + user.getUserFirstName() + ", your account is sucessfully created on " + userRoleName 
+					+"\n\n Thanks & Regards"+"\n"+
+					"Arpitha"+"\n"+
+					"Basvanagudi Bangalore");
+			
+			javaMailSender.send(message);
 			
 			User user1 = repo.save(user2);
 
@@ -111,8 +133,7 @@ public class UserServiceImpl implements UserService {
 			}
 			else
 			{
-//				throw new WrongPasswordException ("Wrong Password !!");
-				return null;
+			   throw new WrongPasswordException ("Wrong Password !!");	
 			}		
 		}
 		else
@@ -121,6 +142,24 @@ public class UserServiceImpl implements UserService {
 		}
 		
 	}
+
+	@Override
+	public ResponseEntity<String> forgotPassword(ForgotRequest forgot) {
+		   	String userEmail = forgot.getUserEmail(); 
+            SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(userEmail);
+            message.setSubject("Request for setting the new Password");
+			message.setText("hai, set the new password by using the below link"
+					+"\n\n Thanks & Regards"+"\n"+
+					"Arpitha"+"\n"+
+					"Basvanagudi Bangalore");
+			
+			javaMailSender.send(message);
+			
+			return new ResponseEntity<String>("Link sent sucessfully", HttpStatus.OK);	
+	}
+
+	
 	
 	
 

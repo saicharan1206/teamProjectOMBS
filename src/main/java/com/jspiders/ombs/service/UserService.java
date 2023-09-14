@@ -2,6 +2,7 @@ package com.jspiders.ombs.service;
 
 import org.springframework.http.ResponseEntity;
 
+import com.jspiders.ombs.dto.ForgotRequest;
 import com.jspiders.ombs.dto.LoginRequest;
 import com.jspiders.ombs.dto.LoginResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
@@ -17,6 +18,5 @@ public interface UserService {
 	
 	public ResponseEntity<ResponseStructure<LoginResponse>> loginUser(LoginRequest login);
 	
-
-
+	public ResponseEntity<String> forgotPassword(ForgotRequest forgot);
 }
