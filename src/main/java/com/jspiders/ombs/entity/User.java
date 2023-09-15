@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,7 +21,6 @@ import jakarta.persistence.Table;
 @Table(name="Users")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
-	
 	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userId;
@@ -30,6 +31,18 @@ public class User {
 	
 	@ManyToOne
 	private Role userRole;
+	
+	@Enumerated(EnumType.STRING) 
+	IsDeleted isDeleted;
+	
+	/* 
+	 *  Here, the enum value will be stored in Database instead of its Default value.
+		Otherwise, it will store the default values like the position.
+	 */
+	
+	public enum IsDeleted{
+		TRUE,FALSE
+	}
 	
 	@CreatedDate
 	private LocalDateTime createdDate;
@@ -100,5 +113,11 @@ public class User {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-		
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 }
+	

@@ -1,6 +1,7 @@
 package com.jspiders.ombs.serviceimpl;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,12 +14,15 @@ import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.Role;
 import com.jspiders.ombs.entity.User;
+import com.jspiders.ombs.entity.User.IsDeleted;
 import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.repository.UserRoleRepository;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.EmailAlreadyFoundException;
+import com.jspiders.ombs.util.exception.IncorrectPasswordException;
 import com.jspiders.ombs.util.exception.UserNotFoundByEmailException;
+import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -34,7 +38,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private JavaMailSender javaMailSender; 
-	
+
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO userRequest) throws MessagingException{
 		
@@ -63,6 +67,7 @@ public class UserServiceImpl implements UserService {
 				user.setUserRole(userRole);
 				user.setUserEmail(email);
 				user.setUserPassword(userRequest.getUserPassword());	
+				user.setIsDeleted(IsDeleted.FALSE);
 				
 		 /** Because of the EnableJpaAuditing & @EntityListeners(AuditingEntityListener.class) **/
 				/** Created Date -- user.setCreatedDate(LocalDateTime.now());**/
@@ -150,7 +155,6 @@ public class UserServiceImpl implements UserService {
 		/** If user email is inCorrect **/
 		throw new UserNotFoundByEmailException("Invalid Email !!");
 	}
-
 	
 	@Override
 	public ResponseEntity<String> changePassword(String email) throws MessagingException {
@@ -161,7 +165,7 @@ public class UserServiceImpl implements UserService {
 			MimeMessage mime = javaMailSender.createMimeMessage();
 			MimeMessageHelper message = new MimeMessageHelper(mime, true);
 			
-			message.setTo(email);
+			message.setTo(user.getUserEmail());
 			message.setSubject("Link to change password");
 			
 			String emailBody = "Hi "+user.getUserFirstName()+", you can change the password using this below link."					 
@@ -181,4 +185,44 @@ public class UserServiceImpl implements UserService {
 		
 		throw new UserNotFoundByEmailException("Please, Enter Valid Email");
 	}
+
+	@Override
+	public ResponseEntity<String> submitUserId(int userId) {
+		Optional<User> user = userRepo.findById(userId);
+		
+		if(user.isPresent()) {
+			
+			User user1 = user.get();
+			String roleName = user1.getUserRole().getRoleName().toLowerCase();
+			
+			if(!roleName.equals("admin")) {
+				return new ResponseEntity<String>("Enter your password to confirm delete" , HttpStatus.OK);
+			}		
+			return new ResponseEntity<String>("Invalid user id, please check your id !!" , HttpStatus.OK);
+		}
+		throw new UserNotFoundByIdException("Invalid User");
+	}
+
+
+	@Override
+	public ResponseEntity<ResponseStructure<String>> confirmDeleteMyAccount(int id, String password) {
+		
+		Optional<User> user = userRepo.findById(id);
+		
+		if(user.isPresent()) {
+			User u1 = user.get();
+			if(u1.getUserPassword().equals(password)) {
+				u1.setIsDeleted(IsDeleted.TRUE);
+				userRepo.save(u1);
+				
+				ResponseStructure<String> structure = new ResponseStructure<String>();
+				structure.setStatusCode(HttpStatus.OK.value());
+				structure.setMessage("Your Account has been deleted Successfully!!");
+				structure.setData("Data DELETED");	
+				return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.OK);
+			}
+			throw new IncorrectPasswordException("Please check your password !!");
+		}
+		throw new UserNotFoundByIdException("Invalid user Id");
+	}	
 }

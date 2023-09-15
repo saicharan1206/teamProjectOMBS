@@ -71,4 +71,24 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		
 		return new ResponseEntity<ErrorStructure>(error , HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> userIdNotExists(UserNotFoundByIdException exp){
+		ErrorStructure error = new ErrorStructure();
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setMessage(exp.getMessage());
+		error.setRootCause("Id not exists!!");
+		
+		return new ResponseEntity<ErrorStructure>(error , HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> invalidPassword(IncorrectPasswordException exp){
+		ErrorStructure error = new ErrorStructure();
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setMessage(exp.getMessage());
+		error.setRootCause("Password is mismatched with your email");
+		
+		return new ResponseEntity<ErrorStructure>(error , HttpStatus.NOT_FOUND);
+	}
 }
