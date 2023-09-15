@@ -2,6 +2,7 @@ package com.jspiders.ombs.entity;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.jspiders.ombs.enums.IsDeleted;
 import com.jspiders.ombs.util.Auditing;
 
 import jakarta.persistence.Column;
@@ -30,5 +31,7 @@ public class User extends Auditing{
 	
 	@ManyToOne
 	private UserRole role;
+	
+	IsDeleted isDeleted;
 
 }

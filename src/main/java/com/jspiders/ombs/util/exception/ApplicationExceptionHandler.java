@@ -57,4 +57,15 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		
 		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_FOUND); 
 	}
+	
+	@ExceptionHandler(InvalidUserException.class)
+	public ResponseEntity<ErrorStructure> saveUser(InvalidUserException exception, HttpServletRequest request)
+	{
+		ErrorStructure structure = new ErrorStructure();
+		structure.setMessage(exception.getMessage());
+		structure.setRootCause(request.getRequestURI());
+		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_FOUND); 
+	}
 }
