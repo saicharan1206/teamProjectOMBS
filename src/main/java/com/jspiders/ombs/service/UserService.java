@@ -12,6 +12,14 @@ public interface UserService {
 /**
  * THIS METHOD IS TO SAVE THE USER DETAILS*/
 	public  ResponseEntity<ResponseStructure<UserResponseDTO>> userSave(UserRequestDTO userRequest);
-
+	/**
+	 * THIS METHOD IS TO LOGIN USERDETAILS*/
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> userLogin(UserRequestDTO userRequest);
+	
+	
+	public ResponseEntity<ResponseStructure<String>> forgotPasswordValidation(String userEmail);
+	
+	
+	
 }
 

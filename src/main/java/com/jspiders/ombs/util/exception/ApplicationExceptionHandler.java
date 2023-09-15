@@ -38,5 +38,29 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		
 	}
 	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> invalidPasswordException (InvalidPasswordException exception)
+	{
+		
+		ErrorStructure structure = new ErrorStructure();
+		structure.setMessage(exception.getMessage());
+		structure.setRootCause("EMAIL IS VALID BUT PASSWORD IS INVALID");
+		structure.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_ACCEPTABLE);
+		
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> emailDoesnotExist(EmaildoesNotExistException exception)
+	{
+		
+		ErrorStructure structure = new ErrorStructure();
+		structure.setMessage(exception.getMessage());
+		structure.setRootCause("EMAIL DOES NOT EXIST");
+		structure.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_ACCEPTABLE);
+		
+	}
+	
 	
 }
