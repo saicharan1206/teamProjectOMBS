@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,6 +44,9 @@ public class User {
 	private String updatedBy;
 	@ManyToOne
 	private UserRole userRole;
+	
+	@Enumerated(EnumType.STRING)
+	private IsDeleted deleted;
 
 	public int getUserId() {
 		return userId;
@@ -121,6 +126,14 @@ public class User {
 
 	public void setUserRole(UserRole userRole) {
 		this.userRole = userRole;
+	}
+
+	public IsDeleted getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(IsDeleted deleted) {
+		this.deleted = deleted;
 	}
 	
 }

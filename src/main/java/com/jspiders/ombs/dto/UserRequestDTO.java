@@ -13,19 +13,19 @@ public class UserRequestDTO {
 	private String role;
 	@NotBlank(message = "User Email should Not Be Blank")
 	@Email(regexp = "[a-zA-Z0-9+_.-]+@[g][m][a][i][l]+.[c][o][m]", message = "invalid email--Should be in the extension of '@gmail.com'")
-	private String emailaddress;
+	private String emailAddress;
 	@NotBlank(message = "User Password should Not Be Blank")
 	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "8 characters mandatory(1 upperCase,1 lowerCase,1 special Character,1 number)")
 	private String password;
 	
 	
 
-	public String getEmailaddress() {
-		return emailaddress;
+	public String getEmailAddress() {
+		return emailAddress;
 	}
 
-	public void setEmailaddress(String emailaddress) {
-		this.emailaddress = emailaddress;
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
 	}
 
 	public String getPassword() {
