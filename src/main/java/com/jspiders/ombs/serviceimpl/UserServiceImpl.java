@@ -1,10 +1,12 @@
 package com.jspiders.ombs.serviceimpl;
 
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
 import com.jspiders.ombs.dto.LoginResponse;
 import com.jspiders.ombs.dto.LoginVerification;
 import com.jspiders.ombs.dto.UserRequestDTO;
@@ -18,7 +20,6 @@ import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.UserAlreadyExistsException;
 import com.jspiders.ombs.util.exception.UserNotFoundByEmailException;
 import com.jspiders.ombs.util.exception.WrongPasswordException;
-
 import jakarta.validation.Valid;
 
 @Service
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private User_RoleRepository user_RoleRepository;
+	
+	@Autowired
+	private JavaMailSender javaMailSender;
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveData (UserRequestDTO userRequestDTO) {
@@ -88,6 +92,21 @@ public class UserServiceImpl implements UserService{
 			structure.setMessage("Data saved successfully !!");
 			structure.setStatusCode(HttpStatus.CREATED.value());
 			
+			
+			
+			
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(save.getUserEmail());
+			mailMessage.setSubject("Successfully Account Created");
+			mailMessage.setText(save.getUserFirstName() + " " + save.getUserLastName() + " " + "You have created Account as a " + save.getUser_Role().getUserRole() + " !! \n\nThanks & Regards"
+					+ "\nTeam OMBS + \nBangalore");
+			mailMessage.setSentDate(new Date());
+			
+			javaMailSender.send(mailMessage);
+			
+			
+			
+			
 			return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure, HttpStatus.CREATED);
 		}
 		else
@@ -126,6 +145,21 @@ public class UserServiceImpl implements UserService{
 		{
 			throw new UserNotFoundByEmailException("User not found by this mail id !!");
 		}		
+	}
+	
+	public ResponseEntity<String> forgotPassword (String userEmail)
+	{
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		
+		mailMessage.setTo(userEmail);
+		mailMessage.setSubject("Verification Code !!");
+		mailMessage.setText("link "
+				+ "\n\nThanks & Regards"
+				+ "\nTeam OMBS \nBangalore");
+		
+		javaMailSender.send(mailMessage);
+		
+		return new ResponseEntity<String> ("sent link to the given mail " + userEmail, HttpStatus.OK);
 	}
 
 }

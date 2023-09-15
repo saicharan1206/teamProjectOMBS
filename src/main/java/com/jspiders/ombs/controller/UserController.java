@@ -13,29 +13,39 @@ import com.jspiders.ombs.dto.LoginVerification;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
+import com.jspiders.ombs.serviceimpl.UserServiceImpl;
 import com.jspiders.ombs.util.ResponseStructure;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/data")
 public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserServiceImpl userServiceImpl;
 
-	@CrossOrigin
 	@PostMapping("/save")
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveData (@RequestBody @Valid UserRequestDTO userRequestDTO)
 	{
 		return userService.saveData(userRequestDTO);
 	}
 	
-	@CrossOrigin
-	@GetMapping("/get/data")
+	
+	@PostMapping("/get/data")
 	public ResponseEntity<ResponseStructure<LoginResponse>> loginVer (@RequestBody @Valid LoginVerification loginVerification)
 	{
 		return userService.loginVer(loginVerification);
+	}
+	
+	@PostMapping("/post/mail/data")
+	public ResponseEntity<String> forgotPassword (String userEmail)
+	{
+		return userServiceImpl.forgotPassword(userEmail);
 	}
 	
 }
