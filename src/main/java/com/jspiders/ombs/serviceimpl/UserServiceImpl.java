@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.jspiders.ombs.dto.MessageData;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
+import com.jspiders.ombs.entity.IsDeleted;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.User_Role;
 import com.jspiders.ombs.repository.UserRepository;
@@ -15,12 +16,15 @@ import com.jspiders.ombs.repository.User_Role_Repository;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.EmailAlreadyExistException;
+import com.jspiders.ombs.util.exception.IncorrectPasswordException;
 import com.jspiders.ombs.util.exception.UserNotFoundByEmailException;
+import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,6 +71,10 @@ public class UserServiceImpl implements UserService {
 			user.setUserLastName(userRequestDTO.getUserLastName());
 			
 			user.setUserRole(userRole); 
+			
+			IsDeleted s=IsDeleted.FALSE;
+			
+			user.setIsDeleted(s);
 			
 			userRepo.save(user);
 			
@@ -181,6 +189,51 @@ public class UserServiceImpl implements UserService {
 		throw new UserNotFoundByEmailException(email+" is invalid, Please enter valid Email!!!"); 
 	}
 
+	@Override
+	public ResponseEntity<ResponseStructure<String>> enterIdToDeleteAccount(int userId) {
+		Optional<User> user = userRepo.findById(userId);
+		
+		if (!user.isEmpty()) {
+			User user1=user.get();
+			IsDeleted s=IsDeleted.TRUE;
+			user1.setIsDeleted(s);
+			userRepo.save(user1);
+			
+			/** Here only we have deleted account based on id(means changed Enum isDeleted value from FALSE to TRUE */
+			
+			ResponseStructure<String> structure = new ResponseStructure<>();
+			structure.setStatusCode(HttpStatus.FOUND.value());
+			structure.setMessage("Your request for Account deletion processed");
+			structure.setData("Your Account deleted successfully!!!");
+			return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.FOUND);
+		}
+		
+		throw new UserNotFoundByIdException("User with userId: "+userId+" is not present, Please enter valid userId!!!");
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<String>> enterPasswordToDelete(String password) {
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<String>> deleteUserAccount2(int id, String password) {
+		Optional<User> user = userRepo.findById(id);
+		if (!user.isEmpty()) {
+			User user1=user.get();
+			if (user1.getUserPassword().equals(password)) {
+				user1.setIsDeleted(IsDeleted.TRUE);
+				userRepo.save(user1);
+				ResponseStructure<String> structure = new ResponseStructure<>();
+				structure.setStatusCode(HttpStatus.FOUND.value());
+				structure.setMessage("Your Request to Delete Account is Processed");
+				structure.setData("Your Account successfully Deleted!!!!");
+				return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.FOUND);
+			} else
+				throw new IncorrectPasswordException(password+" is incorrect!!");
+		}
+		throw new UserNotFoundByIdException("User with userId: "+id+" is not present, Please enter valid userId!!!");
+	}
 	
 }
 

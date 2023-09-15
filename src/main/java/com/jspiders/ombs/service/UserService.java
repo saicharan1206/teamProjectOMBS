@@ -22,5 +22,15 @@ public interface UserService {
 	/** This is to send mail to change password */
 	public ResponseEntity<String> changePassword(String email) throws MessagingException;
 	
+	/** This delete operation is for soft deleting the data from database & deleted record should show as true */
+	public ResponseEntity<ResponseStructure<String>> enterIdToDeleteAccount(int userId);
+	
+	/** if user is found for deleting account using userId then call this method to confirm password to finally delete account
+	 * (but in DB actually we are not deleting account, just changing isDeleted enum to True-> indicating that account is deleted  */
+	public ResponseEntity<ResponseStructure<String>> enterPasswordToDelete(String password);
+	
+	/** second way to delete account */ 
+	public ResponseEntity<ResponseStructure<String>> deleteUserAccount2(int id, String password);
+	
 }
 

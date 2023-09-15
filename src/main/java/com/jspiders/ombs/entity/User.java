@@ -12,6 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,6 +45,20 @@ public class User {
 	@ManyToOne
 	private User_Role userRole;
 	
+	/** by default enum datatype store the variable/field values in the form of array as {0, 1, 2, ....} 
+	 * so the first variable(TRUE) is = 0 & second variable(FALSE) is = 1, 
+	 * therefore while saving data in database without giving @Enumerated(EnumType.STRING) above field/variable 
+	 * it will store values as 0, so to store data as true or false we need to annotate with @Enumerated(EnumType.STRING)
+	 */
+	@Enumerated(EnumType.STRING)  // it will convert o/1 to true/false
+	private IsDeleted isDeleted;
+	
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 	public User_Role getUserRole() {
 		return userRole;
 	}

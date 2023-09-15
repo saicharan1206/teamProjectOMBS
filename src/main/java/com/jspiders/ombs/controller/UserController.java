@@ -45,8 +45,29 @@ public class UserController {
 		return userService.changePassword(email);
 	}
 	
+	@PostMapping("/idToDeleteAccount")
+	public ResponseEntity<ResponseStructure<String>> idToDeleteAccount(@RequestParam int userId){
+		return userService.enterIdToDeleteAccount(userId);
+	}
+	
+	@PostMapping("/passwordToDeleteAccount")
+	public ResponseEntity<ResponseStructure<String>> passwordToDeleteAccount(@RequestParam String password){
+		return userService.enterPasswordToDelete(password);
+	}
+	
+	@PostMapping("/deleteAccount2")
+	public ResponseEntity<ResponseStructure<String>> deleteAccount2(@RequestParam int userId, String userPassword){
+		return userService.deleteUserAccount2(userId, userPassword);
+	}
+	
 
 }
+
+
+
+
+
+
 
 
 

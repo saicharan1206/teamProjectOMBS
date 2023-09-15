@@ -55,5 +55,31 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		structure.setRootCause("User with requested Email doesnot exist!!!");
 		return new ResponseEntity<ErrorStructure>(structure, HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> userNotFoundById(UserNotFoundByIdException ex){
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		structure.setMessage("User Account is not deleted!!!");
+		structure.setRootCause("User with requested id doesnot exist!!!!");
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> incorrectPassword(IncorrectPasswordException ex){
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+		structure.setMessage("User Account is not deleted!!!");
+		structure.setRootCause("You have entered incorrect password, Please enter correct password!!!!");
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_ACCEPTABLE);
+	}
 
 }
+
+
+
+
+
+
+
+
