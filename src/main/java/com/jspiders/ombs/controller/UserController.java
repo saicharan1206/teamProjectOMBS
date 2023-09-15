@@ -1,8 +1,11 @@
 package com.jspiders.ombs.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jspiders.ombs.dto.UserLoginDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
+import com.jspiders.ombs.dto.UserResponse;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
@@ -48,6 +52,19 @@ public class UserController {
 	public ResponseEntity<ResponseStructure<String>> passwordReset(@PathVariable String email){
 		return service.passwordReset(email);
 	}
+	@DeleteMapping("/{ID}")
+	public  ResponseEntity<ResponseStructure<UserResponseDTO>> deleteUser(@PathVariable int ID){
+		return service.deleteUser(ID);
+	}
+	
+	@GetMapping
+	 public ResponseEntity<ResponseStructure<List<UserResponse>>> findAllUser(){
+		return service.findAllUser();
+		 
+	 }
+	
+	
+	
 		
 	
 

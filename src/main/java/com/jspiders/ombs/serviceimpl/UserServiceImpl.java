@@ -1,5 +1,6 @@
 package com.jspiders.ombs.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.jspiders.ombs.dto.UserLoginDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
+import com.jspiders.ombs.dto.UserResponse;
 import com.jspiders.ombs.dto.UserResponseDTO;
+import com.jspiders.ombs.entity.IsDeleted;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.UserRole;
 import com.jspiders.ombs.repository.UserRepository;
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
 
 	
 	
@@ -47,6 +51,8 @@ public class UserServiceImpl implements UserService {
 		user.setUserLastName(request.getUserLastName());		
 		user.setEmail(email);
 		user.setPassword(request.getPassword());
+		user.setIsDeleted(IsDeleted.FALSE);
+		System.out.println(IsDeleted.FALSE);
     	UserRole userRole = new UserRole();
     	userRole.setUserRole(roleType);
     	user.setUserRole(userRole);
@@ -82,6 +88,7 @@ public class UserServiceImpl implements UserService {
         					user.setUserLastName(request.getUserLastName());		
         					user.setEmail(email);
         					user.setPassword(request.getPassword());
+        					user.setIsDeleted(IsDeleted.FALSE);
         	            	user.setUserRole(rolelist.get(i));
         	            	repo.save(user);
             				flag=false;
@@ -102,6 +109,7 @@ public class UserServiceImpl implements UserService {
             ResponseStructure<UserResponseDTO> structure = new ResponseStructure<>();
 	            UserResponseDTO response = new UserResponseDTO();
 				response.setMessage("Email saved sucessfully");
+				response.setUserRole(roleType);
 				
 				
 				structure.setStatusCode(HttpStatus.CREATED.value());
@@ -147,8 +155,6 @@ public class UserServiceImpl implements UserService {
 		boolean flag = false;
 		String role=null;
 		for(int i=0; i<=userList.size()-1;i++) {
-			//System.out.println("Email :"+userList.get(i).getEmail());
-			//System.out.println("Password :" +userList.get(i).getPassword());
 			if(userList.get(i).getEmail().equalsIgnoreCase(email)) {
 				if(userList.get(i).getPassword().equals(password)) {
 					role = userList.get(i).getUserRole().getUserRole();
@@ -159,7 +165,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		if(flag==true) {
-			response.setUserRole(password);
+			//response.setUserRole(password);
 			response.setUserRole(role);
 			response.setMessage("valid credentials");
 			structure.setStatusCode(HttpStatus.OK.value());
@@ -187,7 +193,7 @@ public class UserServiceImpl implements UserService {
 	}
 	@Override
 	public ResponseEntity<ResponseStructure<String>> passwordReset(String email) {
-		String userEmail = repo.getUserByEmail(email);
+		String userEmail = repo.getUserEmailByEmail(email);
 		System.out.println(userEmail);
 		
 		
@@ -209,5 +215,76 @@ public class UserServiceImpl implements UserService {
 		else
 			throw new EmailDoesnotExistsException("Email is not registered");
 	}
+	//@Override
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteAccount(String email, String password) {
+		User user = repo.getUserByEmail(email);
+	   
+		if(user!=null) {
+			if(user.getPassword().equals(password) ) {
+		}
+			user.setIsDeleted(IsDeleted.TRUE);
+			repo.save(user);
+		}
+		else {
+			throw new EmailDoesnotExistsException("Email is not registered");
+			
+		}
+		return null;
+	}
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteUser(int ID) {
+		Optional<User> optional = repo.findById(ID);
+		User user;
+		if(optional.isPresent()) {
+			user = optional.get();
+			user.setIsDeleted(IsDeleted.TRUE);
+			repo.save(user);
+		}
+		else {
+			throw new EmailDoesnotExistsException("User not found");
+			
+		}
+		UserResponseDTO response = new UserResponseDTO();
+		response.setMessage("Account deleted ");
+		response.setUserRole(user.getUserRole().getUserRole());
+		
+		ResponseStructure<UserResponseDTO> structure = new ResponseStructure<UserResponseDTO>();
+		structure.setStatusCode(HttpStatus.OK.value());
+		structure.setMessage("Account deleted successfully");
+		structure.setData(response);
+		return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure,HttpStatus.OK);
+	}
+	
+	//****************  FIND ALL USERS *****************************8
+	@Override
+	public ResponseEntity<ResponseStructure<List<UserResponse>>> findAllUser() {
+		List<User> list = repo.findAll();
+		List<UserResponse> userlist = new ArrayList<UserResponse>();
+		if(!list.isEmpty()) {
+			
+			for(User users : list ) {
+				UserResponse response = new UserResponse();
+				response.setUserFirstName(users.getUserFirstName());
+				response.setUserLastName(users.getUserLastName());
+				response.setUserRole(users.getUserRole().getUserRole());
+				userlist.add(response);
+			}
+			
+		}
+		ResponseStructure<List<UserResponse>> structure = new ResponseStructure<List<UserResponse>>();
+		structure.setData(userlist);
+		structure.setStatusCode(HttpStatus.FOUND.value());;
+		structure.setMessage("Below list of users are found");
+		return new ResponseEntity<ResponseStructure<List<UserResponse>>> (structure, HttpStatus.FOUND);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
