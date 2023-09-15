@@ -7,8 +7,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.jspiders.ombs.enums.IsDeleted;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,67 +43,96 @@ public class User {
 	@ManyToOne
 	private UserRole userrole;
 	
-	public String getUserFirstName() {
-		return userFirstName;
-	}
-	public void setUserFirstName(String userFirstName) {
-		this.userFirstName = userFirstName;
-	}
-	public String getUserLastName() {
-		return userLastName;
-	}
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
-	}
+	@Enumerated(EnumType.ORDINAL)
+    private IsDeleted isDeleted;
+
 	public int getUserId() {
 		return userId;
 	}
+
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-	
+
+	public String getUserFirstName() {
+		return userFirstName;
+	}
+
+	public void setUserFirstName(String userFirstName) {
+		this.userFirstName = userFirstName;
+	}
+
+	public String getUserLastName() {
+		return userLastName;
+	}
+
+	public void setUserLastName(String userLastName) {
+		this.userLastName = userLastName;
+	}
+
 	public String getUserEmail() {
 		return userEmail;
 	}
+
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
 	}
-	
+
 	public String getUserpassword() {
 		return userpassword;
 	}
+
 	public void setUserpassword(String userpassword) {
 		this.userpassword = userpassword;
 	}
+
 	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
+
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
+
 	public String getCreatedBy() {
 		return createdBy;
 	}
+
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
+
 	public LocalDateTime getUpdatedDate() {
 		return updatedDate;
 	}
+
 	public void setUpdatedDate(LocalDateTime updatedDate) {
 		this.updatedDate = updatedDate;
 	}
+
 	public String getUpdatedBy() {
 		return updatedBy;
 	}
+
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
+
 	public UserRole getUserrole() {
 		return userrole;
 	}
+
 	public void setUserrole(UserRole userrole) {
 		this.userrole = userrole;
 	}
+
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
+	};
+
 	
 }
