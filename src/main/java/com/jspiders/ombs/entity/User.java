@@ -7,6 +7,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.jspiders.ombs.enums.IsDeleted;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +40,8 @@ public class User {
 	private String updatedBy;
 	@ManyToOne
 	private UserRole userrole;
+	
+	private IsDeleted isDeleted;
 	
 	public String getUserFirstName() {
 		return userFirstName;
@@ -99,6 +104,12 @@ public class User {
 	}
 	public void setUserrole(UserRole userrole) {
 		this.userrole = userrole;
+	}
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 	
 }
