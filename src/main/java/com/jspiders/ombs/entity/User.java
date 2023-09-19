@@ -10,6 +10,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,7 +40,14 @@ public class User {
 	private String lastUpdatedBy;
 	@ManyToOne
 	private UserRole userRole;
-	
+	private IsDeleted isDeleted;
+
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 	public UserRole getUserRole() {
 		return userRole;
 	}

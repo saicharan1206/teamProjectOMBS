@@ -3,8 +3,10 @@ package com.jspiders.ombs.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,10 +44,23 @@ public class UserController {
 		return service.loginUser(login);
 	}
 	
+	@CrossOrigin
 	@PostMapping("/forgotpassword")
 	public ResponseEntity<String> forgotPassword(@RequestBody ForgotRequest forgot)
 	{
 		return service.forgotPassword(forgot);
 	}
-
+	
+	@PutMapping("/updateUser")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateUser(@RequestBody UserRequestDTO user, @RequestParam int userId)
+	{
+		return service.updateUser(user, userId);
+	}
+	
+	@DeleteMapping("/deleteUser")
+	public ResponseEntity<ResponseStructure<LoginResponse>> deleteAccount(@RequestParam int userId)
+	{
+		return service.deleteAccount(userId);
+	}
+	
 }

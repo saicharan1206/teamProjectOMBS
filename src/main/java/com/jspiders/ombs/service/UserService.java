@@ -11,7 +11,8 @@ import com.jspiders.ombs.util.ResponseStructure;
 
 
 
-public interface UserService {
+public interface UserService 
+{
 	/**
 	 *This method is used to save the user to the database*/
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveData(UserRequestDTO user);
@@ -19,4 +20,10 @@ public interface UserService {
 	public ResponseEntity<ResponseStructure<LoginResponse>> loginUser(LoginRequest login);
 	
 	public ResponseEntity<String> forgotPassword(ForgotRequest forgot);
+	
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateUser(UserRequestDTO user, int userId);
+	
+	public ResponseEntity<ResponseStructure<LoginResponse>> deleteAccount(int userId);
+	
+	
 }

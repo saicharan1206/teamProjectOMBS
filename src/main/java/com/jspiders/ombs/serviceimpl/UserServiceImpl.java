@@ -1,10 +1,12 @@
 package com.jspiders.ombs.serviceimpl;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,6 +18,7 @@ import com.jspiders.ombs.dto.LoginRequest;
 import com.jspiders.ombs.dto.LoginResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
+import com.jspiders.ombs.entity.IsDeleted;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.UserRole;
 import com.jspiders.ombs.repository.UserRepository;
@@ -24,6 +27,7 @@ import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.UserAlreadyExistException;
 import com.jspiders.ombs.util.exception.UserDoesNotExistException;
+import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
 import com.jspiders.ombs.util.exception.WrongPasswordException;
 
 import jakarta.mail.internet.MimeMessage;
@@ -40,6 +44,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private JavaMailSender javaMailSender;
 
+	//*****Save the User*****//
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveData(UserRequestDTO user) {
 		User user2 = new User();
@@ -48,7 +53,7 @@ public class UserServiceImpl implements UserService {
 			user2.setUserLastName(user.getUserLastName());
 			user2.setUserEmail(user.getUserEmail().toLowerCase());
 			user2.setUserPassword(user.getUserPassword());
-			
+			user2.setIsDeleted(IsDeleted.FALSE);			
 			String userRoleName = user.getUserRole().getUserRoleName();
 			UserRole userRole = userRoleRepo.findByUserRoleName(userRoleName);
 			
@@ -62,6 +67,8 @@ public class UserServiceImpl implements UserService {
 			else {
 				user2.setUserRole(userRole);
 			}
+			
+			//*******Send the mail for account creation*********//
 			
 			String userEmail = user.getUserEmail(); 
             SimpleMailMessage message = new SimpleMailMessage();
@@ -101,6 +108,7 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	//***** Login for user or admin*******//
 	@Override
 	public ResponseEntity<ResponseStructure<LoginResponse>> loginUser(LoginRequest login) 
 	{
@@ -143,6 +151,7 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+	//*****forgot password****//
 	@Override
 	public ResponseEntity<String> forgotPassword(ForgotRequest forgot) {
 		   	String userEmail = forgot.getUserEmail(); 
@@ -159,8 +168,64 @@ public class UserServiceImpl implements UserService {
 			return new ResponseEntity<String>("Link sent sucessfully", HttpStatus.OK);	
 	}
 
-	
-	
-	
+	//*******update the user*************//
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateUser(UserRequestDTO user, int userId) {
+		Optional<User> optional = repo.findById(userId);
+		if(optional.isPresent())
+		{
+			User user1 = new User();
+			user1.setUserId(userId);
+			user1.setUserFirstName(user.getUserFirstName());
+			user1.setUserLastName(user.getUserLastName());
+			user1.setUserEmail(user.getUserEmail());
+			user1.setUserPassword(user.getUserPassword());
+			
+			user1 = repo.save(user1);
+			UserResponseDTO response  = new UserResponseDTO();
+			response.setUserId(user1.getUserId());
+			response.setUserFirstName(user1.getUserFirstName());
+			response.setUserLastName(user1.getUserLastName());
+			response.setUserEmail(user1.getUserEmail());
+			response.setUserPassword(user1.getUserPassword());
+			
+			ResponseStructure<UserResponseDTO> structure = new ResponseStructure<UserResponseDTO>();
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("user data Update sucessfully");
+			structure.setData(response);
+			return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure,HttpStatus.OK); 
+		}
+		else
+		{
+			throw new UserNotFoundByIdException("user data does not exists");
+		}
+		
+	}
 
+	//***** delete account *****//
+	@Override
+	public ResponseEntity<ResponseStructure<LoginResponse>> deleteAccount(int userId) {
+		Optional<User> optional = repo.findById(userId);
+		if(optional.isPresent())
+		{
+			User user = optional.get();
+			user.setIsDeleted(IsDeleted.TRUE);
+			repo.save(user);
+			
+			LoginResponse response = new LoginResponse();
+			response.setUserRoleName(user.getUserRole().getUserRoleName());
+			
+			ResponseStructure<LoginResponse> structure = new ResponseStructure<LoginResponse>();
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("Account deleted sucessfully");
+			structure.setData(response);
+			
+			return new ResponseEntity<ResponseStructure<LoginResponse>>(structure,HttpStatus.OK); 
+			
+		}
+		else
+		{
+			throw new UserNotFoundByIdException("user data does not exists");
+		}
+	}
 }
