@@ -1,10 +1,10 @@
 package com.jspiders.ombs.util.exception;
 
-public class UserNotFoundByIdException extends RuntimeException{
+public class InvalidPasswordException extends RuntimeException {
 
 	private String message;
 
-	public UserNotFoundByIdException(String message) {
+	public InvalidPasswordException(String message) {
 		super();
 		this.message = message;
 	}
