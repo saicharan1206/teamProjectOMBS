@@ -1,16 +1,14 @@
 package com.jspiders.ombs.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,6 +37,16 @@ public class User {
 	private String lastUpdatedBy;
 	@ManyToOne
 	private User_Role user_Role;
+	@Enumerated
+	private IsDeleted isDeleted;
+
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 
 	public User_Role getUser_Role() {
 		return user_Role;
@@ -102,22 +110,6 @@ public class User {
 
 	public void setUserId(int userId) {
 		this.userId = userId;
-	}
-
-	public String getUserFirstName() {
-		return firstName;
-	}
-
-	public void setUserFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getUserLastName() {
-		return lastName;
-	}
-
-	public void setUserLastName(String lastName) {
-		this.lastName = lastName;
 	}
 
 	public String getUserEmail() {

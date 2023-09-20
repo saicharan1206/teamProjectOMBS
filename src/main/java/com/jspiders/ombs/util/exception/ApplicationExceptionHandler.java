@@ -69,5 +69,49 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
 		return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> userNotFoundByIdException (UserNotFoundByIdException ex)
+	{
+		ErrorStructure error = new ErrorStructure();
+		error.setMessage(ex.getMessage());
+		error.setRootCause("User not present with this id !!");
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> youAreNotAllowedException (YouAreNotAllowedException ex)
+	{
+		ErrorStructure error = new ErrorStructure();
+		error.setMessage(ex.getMessage());
+		error.setRootCause("Not Allowed to make changes here !!");
+		error.setStatusCode(HttpStatus.FORBIDDEN.value());
+
+		return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> userRoleNotFoundException (UserRoleNotFoundException ex)
+	{
+		ErrorStructure error = new ErrorStructure();
+		error.setMessage(ex.getMessage());
+		error.setRootCause("UserRole not found !!");
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> nullPointerException (NullPointerException ex)
+	{
+		ErrorStructure error = new ErrorStructure();
+		error.setMessage(ex.getMessage());
+		error.setRootCause("No users working as this UserRole !!");
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
 
 }

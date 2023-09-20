@@ -8,8 +8,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.jspiders.ombs.dto.DeleteByIdRequest;
+import com.jspiders.ombs.dto.ForgotPasswordEmail;
+import com.jspiders.ombs.dto.ForgotPasswordEmailResponse;
 import com.jspiders.ombs.dto.LoginResponse;
 import com.jspiders.ombs.dto.LoginVerification;
+import com.jspiders.ombs.dto.UpdateEmail;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
@@ -43,9 +48,27 @@ public class UserController {
 	}
 	
 	@PostMapping("/post/mail/data")
-	public ResponseEntity<String> forgotPassword (String userEmail)
+	public ResponseEntity<ResponseStructure<ForgotPasswordEmailResponse>> forgotPassword (@RequestBody @Valid ForgotPasswordEmail forgotPasswordEmail)
 	{
-		return userServiceImpl.forgotPassword(userEmail);
+		return userServiceImpl.forgotPassword(forgotPasswordEmail);
+	}
+	
+	@PostMapping("/delete/data")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteData (@RequestBody DeleteByIdRequest deleteByIdRequest)
+	{
+		return userService.deleteData(deleteByIdRequest);
+	}
+	
+	@PostMapping("/update/data/email")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateEmail (@RequestBody UpdateEmail updateEmail)
+	{
+		return userService.updateEmail(updateEmail);
+	}
+	
+	@GetMapping("/get/details")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> fetchAllDetailsById (@RequestBody DeleteByIdRequest deleteByIdRequest)
+	{
+		return userService.fetchAllDetailsById (deleteByIdRequest);
 	}
 	
 }

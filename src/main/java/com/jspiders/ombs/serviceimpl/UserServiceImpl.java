@@ -1,26 +1,46 @@
 package com.jspiders.ombs.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.mail.SimpleMailMessage;
+
 import org.springframework.mail.javamail.JavaMailSender;
+
 import org.springframework.stereotype.Service;
+
+import com.jspiders.ombs.dto.DeleteByIdRequest;
+import com.jspiders.ombs.dto.ForgotPasswordEmail;
+import com.jspiders.ombs.dto.ForgotPasswordEmailResponse;
 import com.jspiders.ombs.dto.LoginResponse;
 import com.jspiders.ombs.dto.LoginVerification;
+import com.jspiders.ombs.dto.UpdateEmail;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
+
+import com.jspiders.ombs.entity.IsDeleted;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.User_Role;
+
 import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.repository.User_RoleRepository;
+
 import com.jspiders.ombs.service.UserService;
+
 import com.jspiders.ombs.util.ResponseStructure;
+
 import com.jspiders.ombs.util.exception.UserAlreadyExistsException;
 import com.jspiders.ombs.util.exception.UserNotFoundByEmailException;
+import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
+import com.jspiders.ombs.util.exception.UserRoleNotFoundException;
 import com.jspiders.ombs.util.exception.WrongPasswordException;
-import jakarta.validation.Valid;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -42,21 +62,21 @@ public class UserServiceImpl implements UserService{
 		if (email == null)
 		{
 			User user = new User();
-			
-			user.setUserFirstName(userRequestDTO.getFirstName());
-			user.setUserLastName(userRequestDTO.getLastName());
+
+			user.setFirstName(userRequestDTO.getFirstName());
+			user.setLastName(userRequestDTO.getLastName());
 			user.setUserEmail(userRequestDTO.getUserEmail());
 			user.setUserPassword(userRequestDTO.getUserPassword());
+			user.setIsDeleted(IsDeleted.FALSE);
 			
 			
 			if (user_RoleRepository.findByUserRole(userRequestDTO.getUser_Role().getUserRole()) != null)
-			{
-				User_Role user_Role = new User_Role();
+			{	
+				 User_Role user_Role = user_RoleRepository.save(user_RoleRepository.findByUserRole(userRequestDTO.getUser_Role().getUserRole()));	
 				
-				user_Role = user_RoleRepository.save(user_RoleRepository.findByUserRole(userRequestDTO.getUser_Role().getUserRole()));	
-				
-				user.setUser_Role(user_RoleRepository.findByUserRole(userRequestDTO.getUser_Role().getUserRole()));			
-
+				user.setUser_Role(user_Role);			
+//				user.setUser_Role(user_RoleRepository.findByUserRole(userRequestDTO.getUser_Role().getUserRole()));
+				System.out.println("Hiii");
 			}
 			else
 			{		
@@ -67,7 +87,7 @@ public class UserServiceImpl implements UserService{
 				user_Role = user_RoleRepository.save(user_Role);
 				
 				user.setUser_Role(user_Role);			
-
+				System.out.println("Bye");
 			}
 						
 			
@@ -76,8 +96,8 @@ public class UserServiceImpl implements UserService{
 			UserResponseDTO responseDTO = new UserResponseDTO();
 			
 			responseDTO.setUserId(save.getUserId());
-			responseDTO.setUserFirstName(save.getUserFirstName());
-			responseDTO.setUserLastName(save.getUserLastName());
+			responseDTO.setUserFirstName(save.getFirstName());
+			responseDTO.setUserLastName(save.getLastName());
 			responseDTO.setUserEmail(save.getUserEmail());
 			responseDTO.setCreatedBy(save.getCreatedBy());
 			responseDTO.setCreatedDate(save.getCreatedDate());
@@ -98,7 +118,7 @@ public class UserServiceImpl implements UserService{
 			SimpleMailMessage mailMessage = new SimpleMailMessage();
 			mailMessage.setTo(save.getUserEmail());
 			mailMessage.setSubject("Successfully Account Created");
-			mailMessage.setText(save.getUserFirstName() + " " + save.getUserLastName() + " " + "You have created Account as a " + save.getUser_Role().getUserRole() + " !! \n\nThanks & Regards"
+			mailMessage.setText(save.getFirstName() + " " + save.getLastName() + " " + "You have created Account as a " + save.getUser_Role().getUserRole() + " !! \n\nThanks & Regards"
 					+ "\nTeam OMBS + \nBangalore");
 			mailMessage.setSentDate(new Date());
 			
@@ -147,19 +167,202 @@ public class UserServiceImpl implements UserService{
 		}		
 	}
 	
-	public ResponseEntity<String> forgotPassword (String userEmail)
+	public ResponseEntity<ResponseStructure<ForgotPasswordEmailResponse>> forgotPassword (ForgotPasswordEmail forgotPasswordEmail)
 	{
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		User byUserEmail = userRepository.findByUserEmail(forgotPasswordEmail.getUserEmail());
 		
-		mailMessage.setTo(userEmail);
-		mailMessage.setSubject("Verification Code !!");
-		mailMessage.setText("link "
-				+ "\n\nThanks & Regards"
-				+ "\nTeam OMBS \nBangalore");
+		if (byUserEmail != null)
+		{
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			
+			mailMessage.setTo(forgotPasswordEmail.getUserEmail());
+			mailMessage.setSubject("Verification Code !!");
+			mailMessage.setText("add link here "
+					+ "\n\nThanks & Regards"
+					+ "\nTeam OMBS \nBangalore");
+			
+			javaMailSender.send(mailMessage);
+			
+			ForgotPasswordEmailResponse emailResponse = new ForgotPasswordEmailResponse();
+			emailResponse.setForgotPwdResponse("sent link to the given mail " + forgotPasswordEmail.getUserEmail());
+			
+			ResponseStructure<ForgotPasswordEmailResponse> structure = new ResponseStructure<ForgotPasswordEmailResponse>();
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("Response sent to the respected email id !!");
+			structure.setData(emailResponse);
+			
+			return new ResponseEntity<ResponseStructure<ForgotPasswordEmailResponse>> (structure, HttpStatus.OK);
+		}
+		else
+		{
+			throw new UserNotFoundByEmailException("Invalid Email id !!");
+		}
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteData (DeleteByIdRequest deleteByIdRequest) {
 		
-		javaMailSender.send(mailMessage);
+		Optional<User> findById = userRepository.findById(deleteByIdRequest.getId());
+		User user = findById.get();
 		
-		return new ResponseEntity<String> ("sent link to the given mail " + userEmail, HttpStatus.OK);
+		if (user != null)
+		{
+			if (user.getIsDeleted() == IsDeleted.FALSE)
+			{
+				User user2 = new User();
+				
+				user2.setFirstName(user.getFirstName());
+				user2.setLastName(user.getLastName());
+				user2.setIsDeleted(IsDeleted.TRUE);
+				user2.setUser_Role(user.getUser_Role());
+				user2.setUserEmail(user.getUserEmail());
+				user2.setUserId(user.getUserId());
+				user2.setCreatedBy(user.getCreatedBy());
+				user2.setCreatedDate(user.getCreatedDate());
+				user2.setLastUpdatedBy(user.getLastUpdatedBy());
+				user2.setLastUpdatedDate(user.getLastUpdatedDate());
+				user2.setUserPassword(user.getUserPassword());
+				
+				userRepository.save(user2);
+				
+				UserResponseDTO responseDTO = new UserResponseDTO();
+
+				responseDTO.setUserId(user2.getUserId());
+				responseDTO.setUserFirstName(user2.getFirstName());
+				responseDTO.setUserLastName(user2.getLastName());
+				responseDTO.setUserEmail(user2.getUserEmail());
+				responseDTO.setCreatedBy(user2.getCreatedBy());
+				responseDTO.setCreatedDate(user2.getCreatedDate());
+				responseDTO.setLastUpdatedBy(user2.getLastUpdatedBy());
+				responseDTO.setLastUpdatedDate(user2.getLastUpdatedDate());
+				responseDTO.setUserRole(user2.getUser_Role());
+				
+				ResponseStructure<UserResponseDTO> structure = new ResponseStructure<UserResponseDTO>();
+				
+				structure.setStatusCode(HttpStatus.OK.value());
+				structure.setData(responseDTO);
+				structure.setMessage("Data deleted successfully !!");
+				
+				return new ResponseEntity<ResponseStructure<UserResponseDTO>> (structure, HttpStatus.OK);
+			}
+			else
+			{
+				throw new UserNotFoundByIdException("User of this id not prensent !!");
+			}
+		}
+		else
+		{
+			throw new UserNotFoundByIdException ("User not present in the database !!");
+		}		
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateEmail (UpdateEmail updateEmail) {
+		
+		Optional<User> findById = userRepository.findById(updateEmail.getUserId());
+		User user = findById.get();
+		
+		User email = userRepository.findByUserEmail(updateEmail.getUserEmail());
+		
+		if (user != null)
+		{
+			if (user.getIsDeleted() == IsDeleted.FALSE)
+			{
+				if (email == null)
+				{
+					User user2 = new User();
+					
+					user2.setUserEmail(updateEmail.getUserEmail());
+					user2.setFirstName(user.getFirstName());
+					user2.setLastName(user.getLastName());
+					user2.setIsDeleted(IsDeleted.FALSE);
+					user2.setUser_Role(user.getUser_Role());
+					user2.setUserId(user.getUserId());
+					user2.setCreatedBy(user.getCreatedBy());
+					user2.setCreatedDate(user.getCreatedDate());
+					user2.setLastUpdatedBy(user.getLastUpdatedBy());
+					user2.setLastUpdatedDate(user.getLastUpdatedDate());
+					user2.setUserPassword(user.getUserPassword());
+					
+					user2 = userRepository.save(user2);
+					
+					UserResponseDTO responseDTO = new UserResponseDTO();
+
+					responseDTO.setUserId(user2.getUserId());
+					responseDTO.setUserFirstName(user2.getFirstName());
+					responseDTO.setUserLastName(user2.getLastName());
+					responseDTO.setUserEmail(user2.getUserEmail());
+					responseDTO.setCreatedBy(user2.getCreatedBy());
+					responseDTO.setCreatedDate(user2.getCreatedDate());
+					responseDTO.setLastUpdatedBy(user2.getLastUpdatedBy());
+					responseDTO.setLastUpdatedDate(user2.getLastUpdatedDate());
+					responseDTO.setUserRole(user2.getUser_Role());
+					
+					ResponseStructure<UserResponseDTO> structure = new ResponseStructure<UserResponseDTO>();
+					
+					structure.setStatusCode(HttpStatus.OK.value());
+					structure.setData(responseDTO);
+					structure.setMessage("Data updated successfully !!");
+					
+					SimpleMailMessage mailMessage = new SimpleMailMessage();
+					mailMessage.setTo(user2.getUserEmail());
+					mailMessage.setSubject("Successfully Email updated");
+					mailMessage.setText(user2.getFirstName() + " " + user2.getLastName() + " " + "You have updated Email id successfully !!  \n\nThanks & Regards"
+							+ "\nTeam OMBS + \nBangalore");
+					mailMessage.setSentDate(new Date());
+					
+					javaMailSender.send(mailMessage);
+					
+					return new ResponseEntity<ResponseStructure<UserResponseDTO>> (structure, HttpStatus.OK);
+				}
+				else
+				{
+					throw new UserAlreadyExistsException("User with email id is already exists !!");
+				}
+			}
+			else
+			{
+				throw new UserNotFoundByIdException("User not present with this id !!");
+			}
+		}
+		else
+		{
+			throw new UserNotFoundByIdException("User Not Present !!");
+		}
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> fetchAllDetailsById (
+			DeleteByIdRequest deleteByIdRequest) {
+		
+		User user = userRepository.findByUserId(deleteByIdRequest.getId());
+		System.out.println(user);
+		
+		if (user != null && user.getIsDeleted() == IsDeleted.FALSE)
+		{
+			UserResponseDTO responseDTO = new UserResponseDTO();
+			
+			responseDTO.setUserId(user.getUserId());
+			responseDTO.setUserFirstName(user.getFirstName());
+			responseDTO.setUserLastName(user.getLastName());
+			responseDTO.setUserEmail(user.getUserEmail());
+			responseDTO.setCreatedBy(user.getCreatedBy());
+			responseDTO.setCreatedDate(user.getCreatedDate());
+			responseDTO.setLastUpdatedBy(user.getLastUpdatedBy());
+			responseDTO.setLastUpdatedDate(user.getLastUpdatedDate());
+			responseDTO.setUserRole(user.getUser_Role());
+			
+			ResponseStructure<UserResponseDTO> structure = new ResponseStructure<UserResponseDTO>();
+			structure.setData(responseDTO);
+			structure.setStatusCode(HttpStatus.FOUND.value());
+			structure.setMessage("Employee details fetched successfully !!!");
+			
+			return new ResponseEntity<ResponseStructure<UserResponseDTO>> (structure, HttpStatus.FOUND);
+		}
+		else
+		{
+			throw new UserNotFoundByIdException ("No User found by this id !!");
+		}
 	}
 
 }
