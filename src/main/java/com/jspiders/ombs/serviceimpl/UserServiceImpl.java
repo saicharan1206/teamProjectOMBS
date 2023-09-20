@@ -278,5 +278,30 @@ public class UserServiceImpl implements UserService
 	  }
 	    	throw new InvalidUserException("User Details Not Found");
 	}
+	
+	@Override
+	public ResponseStructure<String> update(String email, String pwd, String cpwd) 
+	{
+		String email1 = email.toLowerCase();
+		User user = repo.findByUserEmail(email1);
+		if(user!=null)
+		{
+			if(pwd.equals(cpwd))
+			{
+				user.setUserPassword(pwd);
+				repo.save(user);
+				
+				ResponseStructure<String> response=new ResponseStructure<>();
+				response.setData("User Password is Updated Seccessfully \nUser New Password Is :"+pwd);
+				response.setStatusCode(HttpStatus.FOUND.value());
+				response.setMessage("Password updated Successfully!!!!!");
+				
+				return response;
+			}
+			throw new UserAlreadyExists("Password MisMatch Please Enter The Correct Password");
+		}
+		throw new UserNotFoundByEmailException("Enter Email Is Not Correct Please Enter Correct Email");
+		
+	}
 
 }

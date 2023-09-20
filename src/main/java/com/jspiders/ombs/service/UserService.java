@@ -24,5 +24,9 @@ public interface UserService
 
   public ResponseStructure<List<UserResponseDTO>> fetchAllAdmin();
 
+public ResponseStructure<String> update(String email, String pwd, String cpwd);
+  
+  
+
 
 }
