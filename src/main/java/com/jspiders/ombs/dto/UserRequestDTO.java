@@ -1,5 +1,7 @@
 package com.jspiders.ombs.dto;
 
+import com.jspiders.ombs.entity.IsDelete;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -15,7 +17,15 @@ public class UserRequestDTO {
 		private String firstName;
 		private String lastName;
 		private String userRole;
-	  	public String getUserEmail() {
+		private IsDelete isDelete;
+		
+	  	public IsDelete getIsDelete() {
+			return isDelete;
+		}
+		public void setIsDelete(IsDelete isDelete) {
+			this.isDelete = isDelete;
+		}
+		public String getUserEmail() {
 	  		return userEmail;
 	  	}
 	  	public void setUserEmail(String userEmail) {

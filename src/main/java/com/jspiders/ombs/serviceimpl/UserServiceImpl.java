@@ -2,6 +2,7 @@ package com.jspiders.ombs.serviceimpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
+import com.jspiders.ombs.entity.IsDelete;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.User_Role;
 import com.jspiders.ombs.repository.UserRepository;
@@ -17,6 +19,7 @@ import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.EmailException;
 import com.jspiders.ombs.util.exception.EmailNotFound;
+import com.jspiders.ombs.util.exception.IdNotFoundException;
 import com.jspiders.ombs.util.exception.PasswordDidNotMatchException;
 
 import jakarta.mail.MessagingException;
@@ -24,6 +27,7 @@ import jakarta.mail.internet.MimeMessage;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -32,10 +36,12 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRoleRepository roleRepo;
 	@Autowired
-  private JavaMailSender javaMailSender;
+	private JavaMailSender javaMailSender;
+
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO userRequest) throws MessagingException {
-		
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO userRequest)
+			throws MessagingException {
+
 		User user = new User();
 		if (repo.findByUserEmail(userRequest.getUserEmail()) == null) {
 			User_Role userRole = roleRepo.getUserRoleByRole(userRequest.getUserRole());
@@ -50,24 +56,24 @@ public class UserServiceImpl implements UserService {
 			user.setFirstName(userRequest.getFirstName());
 			user.setLastName(userRequest.getLastName());
 			user.setUserRole(userRole.getUserRole());
+			user.setIsDelete(userRequest.getIsDelete().FALSE);
 			user.setUserRloe(userRole);
 			repo.save(user);
-			
+
 //			Send a mail
-			
+
 			MimeMessage message = javaMailSender.createMimeMessage();
-			MimeMessageHelper mimemessage = new MimeMessageHelper(message , false);
+			MimeMessageHelper mimemessage = new MimeMessageHelper(message, false);
 			mimemessage.setTo(userRequest.getUserEmail());
-			String emailBody ="Hello "+userRequest.getFirstName()+" "+userRequest.getLastName()+"is registered with OBMS App "
-			+"<br><br><h4> Thanks and Regards <br>"
-					+"Rudra <br>"
-			+"Bangalore <br>";
-			mimemessage.setText(emailBody,true);
+			String emailBody = "Hello " + userRequest.getFirstName() + " " + userRequest.getLastName()
+					+ "is registered with OBMS App " + "<br><br><h4> Thanks and Regards <br>" + "Rudra <br>"
+					+ "Bangalore <br>";
+			mimemessage.setText(emailBody, true);
 			mimemessage.setSentDate(new Date());
 			javaMailSender.send(message);
-			
-}    
-		
+
+		}
+
 		else {
 			throw new EmailException("Email is Already Present");
 		}
@@ -110,61 +116,51 @@ public class UserServiceImpl implements UserService {
 		}
 
 	}
-//	@Override
-//	public ResponseEntity<String> sendMail(MessageDTo messageData) {
-//		SimpleMailMessage message = new SimpleMailMessage();
-//		message.setTo(messageData.getTo());
-//		message.setSubject(messageData.getSubject());
-//		message.setText(messageData.getText()
-//				+"\n\nThanks & Reagrds \n"+messageData.getSenderName()
-//				+"\n"+messageData.getSenderAddress()
-//				);
-//		message.setSentDate(new Date());	
-//		javaMailSender.send(message);
-//		return new ResponseEntity<String> ("Mail send successfully", HttpStatus.OK);
-//	}
-//
-//	@Override
-//	public ResponseEntity<String> sendMail(MessageDTO messageData) {
-//		SimpleMailMessage message = new SimpleMailMessage();
-//		if(message !=null) {
-//		message.setTo(messageData.getTo());
-//		message.setSubject(messageData.getSubject());
-//		message.setText(messageData.getText()+"\n\nThanks & Reagrds \n"+messageData.getSenderName()
-//		+"\n"+messageData.getSenderAddress());
-//		message.setSentDate(new Date());
-//		javaMailSender.send(message);
-//		
-//		return new ResponseEntity<String> ("Mail send successfully", HttpStatus.OK);
-//	}else {
-//		throw new 
-//	}
 
 	@Override
 	public ResponseEntity<String> changePassword(String email) throws MessagingException {
-	    User user = repo.findByUserEmail(email);
-	    if(user!=null) {
-	    	MimeMessage mime = javaMailSender.createMimeMessage();
-	        MimeMessageHelper message = new MimeMessageHelper(mime , false);
-	        message.setTo(user.getUserEmail());
-	        message.setSubject("Password Link");
-	        String emailBody = "Hello"+user.getFirstName()+" "+user.getLastName()+"You can cahnge the password using link"
-	        		+"<a href=\"\"></a>"
-	        		+"<h1>Thanks & Regards"+"Rudra<h1>"
-	        		+"img src=\"";
-	        message.setText(emailBody , true);
-	        message.setSentDate(new Date());
-	        javaMailSender.send(mime);
-	        return new ResponseEntity<String>("Email sent Sucessfully",HttpStatus.OK);
-	    }else {
-	    	throw new EmailNotFound("Email is Invalid");
-	    }
-		
+		User user = repo.findByUserEmail(email);
+		if (user != null) {
+			MimeMessage mime = javaMailSender.createMimeMessage();
+			MimeMessageHelper message = new MimeMessageHelper(mime, false);
+			message.setTo(user.getUserEmail());
+			message.setSubject("Password Link");
+			String emailBody = "Hello" + user.getFirstName() + " " + user.getLastName()
+					+ "You can cahnge the password using link" + "<a href=\"\"></a>" + "<h1>Thanks & Regards"
+					+ "Rudra<h1>" + "img src=\"";
+			message.setText(emailBody, true);
+			message.setSentDate(new Date());
+			javaMailSender.send(mime);
+			return new ResponseEntity<String>("Email sent Sucessfully", HttpStatus.OK);
+		} else {
+			throw new EmailNotFound("Email is Invalid");
+		}
+
 	}
 
-	
-	
-	
+	@Override
+	public ResponseEntity<ResponseStructure<String>> isDeleted(int userId, String userPassword) {
 
-	
+		Optional<User> user = repo.findById(userId);
+		if (user.isPresent()) {
+			User user1 = user.get();
+			if (user1.getUserPassword().equals(userPassword)) {
+				user1.setIsDelete(user1.getIsDelete().TRUE);
+				repo.save(user1);
+				ResponseStructure<String> structure = new ResponseStructure<String>();
+				structure.setData(userPassword);
+				structure.setMessage("Data is deleted");
+				structure.setStatusCode(HttpStatus.OK.value());
+				return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.OK);
+
+			}
+
+			throw new PasswordDidNotMatchException("You Have Entred Wrong Password");
+
+		}
+
+		throw new IdNotFoundException("The User Id is Not Present");
+
+	}
+
 }

@@ -12,10 +12,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.Valid;
 
 @Entity(name = "demo_User")
 @EntityListeners(AuditingEntityListener.class)
@@ -38,6 +41,8 @@ public class User {
 	private String updatedBy;
     @ManyToOne
 	private User_Role userRloe;
+    @Enumerated(EnumType.STRING)
+    private IsDelete isDelete;
 	
 	public int getUserId() {
 		return userId;
@@ -125,6 +130,14 @@ public class User {
 
 	public void setUserRloe(User_Role userRloe) {
 		this.userRloe = userRloe;
+	}
+
+	public IsDelete getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(IsDelete isDelete) {
+		this.isDelete = isDelete;
 	}
 
 }

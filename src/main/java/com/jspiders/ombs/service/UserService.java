@@ -15,4 +15,6 @@ public interface UserService {
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> userLogin(UserRequestDTO userRequest) throws MessagingException;
 	
     public ResponseEntity<String> changePassword(String password) throws MessagingException;
+    
+    public ResponseEntity<ResponseStructure< String>> isDeleted(int userId,String userPassword);
 }
