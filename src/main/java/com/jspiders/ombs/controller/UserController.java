@@ -60,6 +60,11 @@ public class UserController {
 		return userService.deleteUserAccount2(userId, userPassword);
 	}
 	
+	@PostMapping("/createNewPassword")
+	public ResponseEntity<ResponseStructure<String>> createNewPassword(@RequestParam String password){
+		return userService.createNewPassword(password);
+	}
+	
 
 }
 

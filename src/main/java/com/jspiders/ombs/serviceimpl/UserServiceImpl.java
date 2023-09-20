@@ -23,8 +23,12 @@ import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
+import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +44,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
+	private String mailStorage =null;
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO userRequestDTO) throws MessagingException {
@@ -166,15 +172,22 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+//	private Map<String, String> emailStorage = new HashMap<>();
 	@Override
 	public ResponseEntity<String> changePassword(String email) throws MessagingException {
 		User user = userRepo.findByUserEmail(email);
 		if(user!=null) {
+//			String token = UUID.randomUUID().toString();
+//			emailStorage.put(token, email);
+			
+//			mailStorage = email;
+			
 			MimeMessage mime = javaMailSender.createMimeMessage();
 			MimeMessageHelper message = new MimeMessageHelper(mime,true);
 			message.setTo(email);
 			message.setSubject("Change password");
 			String emailBody = "Hello "+user.getUserFirstName()+" "+user.getUserLastName()+", you can change the Account Password using below link: "
+								+"<a href=\"http://localhost:8080/users\">"+"Click here</a> to visit our website."
 								+"<br><br><h4>Thanks & Regards!</h4>"+
 							  "<h4>"+"Admin of OMB"+"</h4>"+
 							  "<h4>"+"JSpiders @Basavanagudi"+"</h4><br>"+
@@ -233,6 +246,22 @@ public class UserServiceImpl implements UserService {
 				throw new IncorrectPasswordException(password+" is incorrect!!");
 		}
 		throw new UserNotFoundByIdException("User with userId: "+id+" is not present, Please enter valid userId!!!");
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<String>> createNewPassword(String password) {
+		String mail = mailStorage;
+		System.out.println(mail+" 11111");
+		User user = userRepo.findByUserEmail(mail);
+		user.setUserPassword(password);
+		userRepo.save(user);
+		ResponseStructure<String> structure = new ResponseStructure<>();
+		structure.setStatusCode(HttpStatus.OK.value());
+		structure.setMessage("New Password created!!");
+		structure.setData("Password changed successfully!!!");
+		mailStorage = null;
+		System.out.println(mailStorage+" 22222");
+		return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.OK);
 	}
 	
 }

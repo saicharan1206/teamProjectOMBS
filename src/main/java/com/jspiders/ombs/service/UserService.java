@@ -32,5 +32,9 @@ public interface UserService {
 	/** second way to delete account */ 
 	public ResponseEntity<ResponseStructure<String>> deleteUserAccount2(int id, String password);
 	
+	/** Sending request to SAVE Newly Created Password to that sent Email object */
+	public ResponseEntity<ResponseStructure<String>> createNewPassword(String password);
+	
+	
 }
 
