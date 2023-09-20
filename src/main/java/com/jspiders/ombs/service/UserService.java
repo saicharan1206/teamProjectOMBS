@@ -1,11 +1,13 @@
 package com.jspiders.ombs.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
-import com.jspiders.ombs.dto.ForgetEmailResponse;
-
+import com.jspiders.ombs.dto.ForgotEmailResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
+import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.util.ResponseStructure;
 
 import jakarta.validation.Valid;
@@ -16,8 +18,14 @@ public interface UserService {
 
 	ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(String email, String password);
 
-	ResponseEntity<ResponseStructure<ForgetEmailResponse>> getEmail(String email);
+	ResponseEntity<ResponseStructure<ForgotEmailResponse>> getUserByEmail(String email);
 
-	
+	ResponseEntity<ResponseStructure<UserResponseDTO>> deleteByEmail(String email);
+
+	ResponseEntity<ResponseStructure<UserResponseDTO>> updateByEmail(@Valid UserRequestDTO requestDTO);
+
+	ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findAllUser();
+
+
 
 }

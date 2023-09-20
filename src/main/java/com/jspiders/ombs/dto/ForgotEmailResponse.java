@@ -3,13 +3,10 @@ package com.jspiders.ombs.dto;
 import java.time.LocalDateTime;
 
 import lombok.Data;
-
 @Data
-public class ForgetEmailResponse {
+public class ForgotEmailResponse {
 	private int userId;
-	
 	private String userEmail;
-	private LocalDateTime createDateTime;
-	private String createBy;
-
+	private LocalDateTime createdDateTime;
+	private String createdBy;
 }
