@@ -2,6 +2,7 @@ package com.jspiders.ombs.entity;
 
 import org.springframework.stereotype.Component;
 
+import com.jspiders.ombs.enums.IsDeleted;
 import com.jspiders.ombs.util.Auditing;
 
 import jakarta.persistence.Column;
@@ -31,4 +32,5 @@ public class User extends Auditing {
 	private String userLastName;
 	@ManyToOne
 	private UserRole role;
+	IsDeleted deleted;
 }

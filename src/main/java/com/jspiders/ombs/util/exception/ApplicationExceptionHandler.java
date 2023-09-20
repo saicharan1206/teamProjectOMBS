@@ -36,4 +36,16 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		return new ResponseEntity(error, HttpStatus.NOT_FOUND);
 		
 	}
+	
+	@ExceptionHandler(PasswordMissMatch.class)
+	public ResponseEntity<ErrorStructure> saveUser(PasswordMissMatch missMatch, HttpServletRequest httpServletRequest){
+		ErrorStructure error = new ErrorStructure();
+		error.setMessage(missMatch.getMessage());
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setRootCause(httpServletRequest.getRequestURI());
+		
+		
+		return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+		
+	}
 }
