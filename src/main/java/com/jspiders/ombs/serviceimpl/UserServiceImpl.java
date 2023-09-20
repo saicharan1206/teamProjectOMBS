@@ -1,6 +1,8 @@
 package com.jspiders.ombs.serviceimpl;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +39,11 @@ public class UserServiceImpl implements UserService {
 	private UserRoleRepository roleRepo;
 	
 	@Autowired
-	private JavaMailSender javaMailSender; 
+	private JavaMailSender javaMailSender;
 
+// TO STORE EMAIL TO CHANGE PASSWORD BY USING FORGOT PASSWORD AND CONFIRM NEW PASSWORD
+	String mail;
+	
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO userRequest) throws MessagingException{
 		
@@ -159,22 +164,26 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<String> changePassword(String email) throws MessagingException {
 		
+		mail = email;
 		User user = userRepo.findByUserEmail(email);
 		
 		if(user != null) {
 			MimeMessage mime = javaMailSender.createMimeMessage();
 			MimeMessageHelper message = new MimeMessageHelper(mime, true);
 			
+			String link = "https://github.com/partharj3/ConfirmPasswordHTML/blob/main/Animation.html";
+			
 			message.setTo(user.getUserEmail());
 			message.setSubject("Link to change password");
 			
-			String emailBody = "Hi "+user.getUserFirstName()+", you can change the password using this below link."					 
-					
-							+"<br><h4>Thanks & Regards</h4>"
-							+"<h4>Admin Jspiders</h4>" 
-							+"<h4>Jspiders Basavanagudi, Bangalore</h4>"
-							+"<img src=\"https://media.istockphoto.com/id/1365830421/vector/hands-holding-house-symbol-with-heart-shape-thick-line-icon-with-pointed-corners-and-edges.jpg?s=1024x1024&w=is&k=20&c=SUp17dtO-N7qhENwnqxxEYD3SIFwfcu5-e9RCp4vlLw=\" width=\"120\">";
+			String emailBody = "Hi "+user.getUserFirstName()+", you can change the password using this below link.\n"	
+								+ "<a href=\"" +link+"\">Click Here</a>\r\n"
 			
+								+"<br><h4>Thanks & Regards</h4>"
+								+"<h4>Admin Jspiders</h4>" 
+								+"<h4>Jspiders Basavanagudi, Bangalore</h4>"
+								+"<img src=\"https://media.istockphoto.com/id/1365830421/vector/hands-holding-house-symbol-with-heart-shape-thick-line-icon-with-pointed-corners-and-edges.jpg?s=1024x1024&w=is&k=20&c=SUp17dtO-N7qhENwnqxxEYD3SIFwfcu5-e9RCp4vlLw=\" width=\"120\">";
+				
 			message.setText(emailBody, true);
 			message.setSentDate(new Date());
 			
@@ -203,7 +212,6 @@ public class UserServiceImpl implements UserService {
 		throw new UserNotFoundByIdException("Invalid User");
 	}
 
-
 	@Override
 	public ResponseEntity<ResponseStructure<String>> confirmDeleteMyAccount(int id, String password) {
 		
@@ -225,4 +233,25 @@ public class UserServiceImpl implements UserService {
 		}
 		throw new UserNotFoundByIdException("Invalid user Id");
 	}	
+
+	public ResponseEntity<ResponseStructure<String>> confirmNewPassword(String newPassword){
+
+		 System.out.println(mail);
+		 User user = userRepo.findByUserEmail(mail);
+		 
+		 user.setUserPassword(newPassword);
+		 userRepo.save(user);
+		 mail = null;
+
+		 System.out.println(mail);
+		 
+		 ResponseStructure<String> structure = new ResponseStructure<String>();
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("New Password Validated");
+			structure.setData("PASSWORD chnaged Successfully !!");	
+			return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.OK);	
+	}
+	
 }
+
+

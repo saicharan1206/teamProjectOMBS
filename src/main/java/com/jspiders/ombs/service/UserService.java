@@ -25,4 +25,7 @@ public interface UserService {
 	// Confirm PASSWORD from User
 	public ResponseEntity<ResponseStructure<String>> confirmDeleteMyAccount(int id, String password);
 	
+	// to CREATE and CONFIRM Password
+	public ResponseEntity<ResponseStructure<String>> confirmNewPassword(String newPasword);
+	
 }

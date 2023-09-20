@@ -50,5 +50,9 @@ public class UserController {
 		return service.confirmDeleteMyAccount(id, password);
 	}
 	
-
+	@PostMapping("/confirmNewPassword")
+	public ResponseEntity<ResponseStructure<String>> confirmNewPassword(@RequestParam String newPassword){
+		return service.confirmNewPassword(newPassword);
+	}
+	
 }

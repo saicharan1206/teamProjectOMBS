@@ -37,7 +37,7 @@ public class User {
 	
 	/* 
 	 *  Here, the enum value will be stored in Database instead of its Default value.
-		Otherwise, it will store the default values like the position.
+	 *  Otherwise, it will store the default values like the position.
 	 */
 	
 	public enum IsDeleted{
