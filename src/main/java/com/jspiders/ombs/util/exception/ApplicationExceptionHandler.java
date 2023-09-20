@@ -1,9 +1,7 @@
 package com.jspiders.ombs.util.exception;
 
-import java.net.http.HttpHeaders;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -38,26 +36,8 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 			errors.put(field,message);
 		}
 		return new ResponseEntity<Object>(errors, HttpStatus.BAD_REQUEST);
-	
 		}
-	
-//	@Override
-//	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-//			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-//		
-//		List<ObjectError> allErrors = ex.getAllErrors();
-//		Map<String, String> errors = new HashMap<String, String>();
-//		
-//		for(ObjectError error : allErrors) {
-//	 		
-//			FieldError fieldError = (FieldError) error;
-//			
-//			String message = fieldError.getDefaultMessage();
-//			String field = fieldError.getField();
-//			errors.put(field,message);
-//		}
-//		return new ResponseEntity<Object>(errors, HttpStatus.BAD_REQUEST);
-//	}
+
 	
 	@ExceptionHandler
 	public ResponseEntity<ErrorStructure> emailAlreadyPresent(EmailException ex){
@@ -74,7 +54,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		ErrorStructure structure = new  ErrorStructure();
 		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
 		structure.setMessage(ex.getMessage());
-		structure.setRootCause("Email is not found");
+		structure.setRootCause("Email is not present");
 		return new ResponseEntity<ErrorStructure>(structure, HttpStatus.NOT_FOUND);
 	}
 	

@@ -16,5 +16,8 @@ public interface UserService {
 	
 	public ResponseEntity<String> changePassword(String password) throws MessagingException;
 	
+	public ResponseEntity<ResponseStructure<String>> deleteUser(int userID, String password);
+	
+	
 	
 }

@@ -2,6 +2,7 @@ package com.jspiders.ombs.serviceimpl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,18 +12,18 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.jspiders.ombs.dto.MessageData;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponse;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.UserRole;
 import com.jspiders.ombs.repository.UserRepository;
-import com.jspiders.ombs.repository.UserRoleRepositary;
+import com.jspiders.ombs.service.UserRoleRepositary;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.EmailException;
 import com.jspiders.ombs.util.exception.EmailNotFoundException;
 import com.jspiders.ombs.util.exception.PasswordNotMatchingExceeption;
+import com.jspiders.ombs.util.exception.UserIdIsNotPresentException;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -59,6 +60,7 @@ public class UserServiceImpl implements UserService {
 			user.setUserPassord(userRequest.getUserPassord());
 			user.setUserFirstName(userRequest.getUserFirstName());
 			user.setUserLastName(userRequest.getUserLastName());
+			user.setIsDeleted(userRequest.getDeleted().FALSE);
 			user.setRole(userRole);
 			userRepo.save(user);
 			
@@ -148,9 +150,29 @@ public class UserServiceImpl implements UserService {
 		else {
 			throw new EmailNotFoundException("Email is not Present");
 		}
-	
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<String>> deleteUser(int userId, String password) {
+		Optional<User> userFind = userRepo.findById(userId);
 		
-	
+		if(userFind.isPresent()) {
+			User user = userFind.get();
+			
+			if(user.getUserPassord().equals(password)) {
+				user.setIsDeleted(user.getIsDeleted().TRUE);
+				userRepo.save(user);
+				ResponseStructure<String> structure = new ResponseStructure<String>();
+				structure.setStatusCode(HttpStatus.OK.value());
+				structure.setMessage(" Data is Deleted Succssfully");
+				structure.setData("data is Deleted");
+				return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.OK);
+			}
+			else {
+				throw new PasswordNotMatchingExceeption("Password is Not Matching");
+			}
+		}
+		throw new UserIdIsNotPresentException("Id is Not Present");
 	}
 
 

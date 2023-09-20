@@ -1,4 +1,4 @@
-package com.jspiders.ombs.repository;
+package com.jspiders.ombs.service;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

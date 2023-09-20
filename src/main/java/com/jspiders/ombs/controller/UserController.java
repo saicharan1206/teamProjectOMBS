@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
@@ -28,7 +30,7 @@ public class UserController {
 	
 	@CrossOrigin
 	@PostMapping
-	public ResponseEntity<ResponseStructure<UserResponse>> saveUser(@RequestBody UserRequestDTO userRequest)  throws MessagingException{
+	public ResponseEntity<ResponseStructure<UserResponse>> saveUser(@RequestBody @Valid UserRequestDTO userRequest)  throws MessagingException{
 		return service.saveUser(userRequest);
 	}
 	
@@ -43,9 +45,17 @@ public class UserController {
 		return service.userlogin(userRequest);
 	}
 	
+	@CrossOrigin
 	@PostMapping(params =  "email")
 	public ResponseEntity<String> changePassword(@RequestParam String email) throws MessagingException{
 		return service.changePassword(email);
+	}
+	
+	
+	@CrossOrigin
+	@PutMapping("/softdelete")
+	public ResponseEntity<ResponseStructure<String>> deleteUser(@RequestParam int userId, String password){
+		return service.deleteUser(userId, password );
 	}
 
 }

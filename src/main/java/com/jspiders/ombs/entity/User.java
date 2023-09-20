@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -81,10 +83,21 @@ public class User {
 	
 	
 	@LastModifiedDate
-	private Date updatedDate = null;
+	private Date updatedDate;
 	
 	@LastModifiedBy
-	private String updatedBy = null;
+	private String updatedBy;
+	
+	@Enumerated(EnumType.STRING)
+	private IsDeleted isDeleted;
+	
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 
 	public int getUserId() {
 		return userId;
