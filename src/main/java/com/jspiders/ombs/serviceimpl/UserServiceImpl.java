@@ -1,16 +1,19 @@
 package com.jspiders.ombs.serviceimpl;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
 import com.jspiders.ombs.dto.ForgotEmailResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
@@ -25,6 +28,8 @@ import com.jspiders.ombs.util.exception.InvalidUserException;
 import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
 import com.jspiders.ombs.util.exception.UserNotFoundException;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.validation.Valid;
 
 @Service
@@ -106,18 +111,34 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> getUserByEmail(String email) {
+	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> getUserByEmail(String email) throws MessagingException {
 		User user = repo.findByUserEmail(email);
 
 		if (user != null) {
-			SimpleMailMessage message = new SimpleMailMessage();
-			message.setTo(user.getUserEmail());
-			message.setSubject("update password ");
-			message.setText("Please click below link to set new password " + "\n\nThanks & Regards" + "\n"
-					+ user.getCreatedBy() + "\n");
-			message.setSentDate(new Date());
-			javaMailSender.send(message);
+//			SimpleMailMessage message = new SimpleMailMessage();
+//			message.setTo(user.getUserEmail());
+//			message.setSubject("update password ");
+//			message.setText("Please click below link to set new password " + "\n\nThanks & Regards" + "\n"
+//					+ user.getCreatedBy() + "\n");
+//			message.setSentDate(new Date());
+//			javaMailSender.send(message);
 
+			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
+			helper.setSentDate(new Date());
+			//FileSystemResource file=new FileSystemResource(new File("C:\\Users\\Admin\\Pictures\\Saved Pictures\\lion.jpg"));
+			
+		//	helper.addAttachment("lion.jpg", file);
+			helper.setTo(user.getUserEmail());
+			helper.setSubject("update password ");
+			 String emailBody = "Please click below link to set new password "+"<br>"+" <a href=\"http://localhost:3000/pwd/"+user.getUserEmail()+"\">click here</a>"+"<h4>Thanks & Regards<br>"
+					 			+user.getCreatedBy()+"<br>"+"</h4>"
+					 			+"<img src=\"https://www.jspiders.com/_nuxt/img/logo_jspiders.3b552d0.png\" width=\"250\" />";
+			helper.setText(emailBody,true);
+			helper.setSentDate(new Date());
+			
+			javaMailSender.send(mimeMessage);
+			
 			ForgotEmailResponse emailResponse = new ForgotEmailResponse();
 			emailResponse.setUserId(user.getUserId());
 			emailResponse.setCreatedBy(user.getCreatedBy());
@@ -135,27 +156,27 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteByEmail(String email) {
-	User user = repo.findByUserEmail(email);
-	if (user != null && user.getRole().getUser().equals("admin")) {
-	user.setIsDeleted(IsDeleted.TRUE);
-	repo.save(user);
-	
-	UserResponseDTO responseDTO = new UserResponseDTO();
-	responseDTO.setUserId(user.getUserId());
-	responseDTO.setUserEmail(user.getUserEmail());
-	responseDTO.setCreatedDateTime(user.getCreatedDateTime());
-	responseDTO.setCreatedBy(user.getCreatedBy());
-	responseDTO.setUserFirstName(user.getUserFirstName());
-	responseDTO.setUserLastName(user.getUserLastName());
+		User user = repo.findByUserEmail(email);
+		if (user != null && user.getRole().getUser().equals("admin")) {
+			user.setIsDeleted(IsDeleted.TRUE);
+			repo.save(user);
 
-	ResponseStructure<UserResponseDTO> structure = new ResponseStructure<>();
-	structure.setData(responseDTO);
-	structure.setMessage("user data deleted successfully!!!");
-	structure.setStatusCode(HttpStatus.CREATED.value());
-	return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure, HttpStatus.CREATED);
-	}
-	throw new InvalidUserException("Email not found  or User as no authoriztion to delete the data");
-	
+			UserResponseDTO responseDTO = new UserResponseDTO();
+			responseDTO.setUserId(user.getUserId());
+			responseDTO.setUserEmail(user.getUserEmail());
+			responseDTO.setCreatedDateTime(user.getCreatedDateTime());
+			responseDTO.setCreatedBy(user.getCreatedBy());
+			responseDTO.setUserFirstName(user.getUserFirstName());
+			responseDTO.setUserLastName(user.getUserLastName());
+
+			ResponseStructure<UserResponseDTO> structure = new ResponseStructure<>();
+			structure.setData(responseDTO);
+			structure.setMessage("user data deleted successfully!!!");
+			structure.setStatusCode(HttpStatus.CREATED.value());
+			return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure, HttpStatus.CREATED);
+		}
+		throw new InvalidUserException("Email not found  or User as no authoriztion to delete the data");
+
 	}
 
 	@Override
@@ -172,8 +193,7 @@ public class UserServiceImpl implements UserService {
 		user.setRole(userRole);
 		user.setIsDeleted(IsDeleted.FALSE);
 		user = repo.save(user);
-		repo.save(user);
-		
+
 		UserResponseDTO responseDTO = new UserResponseDTO();
 		responseDTO.setUserId(user.getUserId());
 		responseDTO.setUserEmail(user.getUserEmail());
@@ -181,6 +201,7 @@ public class UserServiceImpl implements UserService {
 		responseDTO.setCreatedBy(user.getCreatedBy());
 		responseDTO.setUserFirstName(user.getUserFirstName());
 		responseDTO.setUserLastName(user.getUserLastName());
+		responseDTO.setUserRole(user.getRole().getUserRole());
 
 		ResponseStructure<UserResponseDTO> structure = new ResponseStructure<>();
 		structure.setData(responseDTO);
@@ -192,12 +213,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findAllUser() {
 		List<User> findAll = repo.findAll();
-		if(!findAll.isEmpty())
-		{
+		if (!findAll.isEmpty()) {
 			Vector<UserResponseDTO> usersDtos = new Vector();
 			for (User user : findAll) {
-				if(user.getRole().getUserRole().equalsIgnoreCase("admin"))
-				{
+				if (user.getRole().getUserRole().equalsIgnoreCase("admin")) {
 					UserResponseDTO response = new UserResponseDTO();
 					response.setUserId(user.getUserId());
 					response.setCreatedBy(user.getCreatedBy());
@@ -209,7 +228,7 @@ public class UserServiceImpl implements UserService {
 					response.setUserEmail(user.getUserEmail());
 					response.setUserFirstName(user.getUserFirstName());
 					response.setUserLastName(user.getUserLastName());
-					
+
 					usersDtos.add(response);
 
 				}
@@ -223,7 +242,38 @@ public class UserServiceImpl implements UserService {
 		throw new UserNotFoundException("User not found!!");
 	}
 
-	
-
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> updatePassword(String email, String pwd,
+			String confirmPwd) {
+		User user = repo.findByUserEmail(email.toLowerCase());
+		if(user!=null )
+		{
+			if(pwd.equals(confirmPwd))
+			{
+			user.setPassword(confirmPwd);
+			repo.save(user);
+			}
+			else 
+				{
+					throw new UserNotFoundByIdException("Password missmatch!!");
+				}
+			
+			UserResponseDTO responseDTO = new UserResponseDTO();
+			responseDTO.setUserId(user.getUserId());
+			responseDTO.setUserEmail(user.getUserEmail());
+			responseDTO.setCreatedDateTime(user.getCreatedDateTime());
+			responseDTO.setCreatedBy(user.getCreatedBy());
+			responseDTO.setUserFirstName(user.getUserFirstName());
+			responseDTO.setUserLastName(user.getUserLastName());
+			responseDTO.setUserRole(user.getRole().getUserRole());
+			
+			ResponseStructure<UserResponseDTO> structure = new ResponseStructure<>();
+			structure.setData(responseDTO);
+			structure.setMessage("User password updated successfully!!!");
+			structure.setStatusCode(HttpStatus.ACCEPTED.value());
+			return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure, HttpStatus.ACCEPTED);
+		}
+		throw new UserNotFoundException("User not found!!");
+	}
 
 }

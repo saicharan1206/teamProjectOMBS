@@ -10,6 +10,7 @@ import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.util.ResponseStructure;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 public interface UserService {
@@ -18,13 +19,16 @@ public interface UserService {
 
 	ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(String email, String password);
 
-	ResponseEntity<ResponseStructure<ForgotEmailResponse>> getUserByEmail(String email);
+	ResponseEntity<ResponseStructure<ForgotEmailResponse>> getUserByEmail(String email) throws MessagingException;
 
 	ResponseEntity<ResponseStructure<UserResponseDTO>> deleteByEmail(String email);
 
 	ResponseEntity<ResponseStructure<UserResponseDTO>> updateByEmail(@Valid UserRequestDTO requestDTO);
 
 	ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findAllUser();
+
+	ResponseEntity<ResponseStructure<UserResponseDTO>> updatePassword(String email, String pwd,
+			String confirmPwd);
 
 
 
