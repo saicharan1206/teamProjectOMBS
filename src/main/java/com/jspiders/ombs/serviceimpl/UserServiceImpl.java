@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService {
 			message.setTo(user.getEmailAddress());
 			message.setSubject("Link To Create Password");
 
-			String emailBody = "Hi" + user.getUserFirstName() + ",You can change the password using the below link."
+			String emailBody = "Hi" + user.getUserFirstName() + ",You can change the password using the below link."+"<a href=\"http://localhost:3000/forgotpass\">Click Here</a>"
 					+ "<br><br><h4>Thanks & Regard</h4><br>" + "<h4>Jspider</h4><br>" + "<h4>http</h4>";
 			message.setText(emailBody, true);
 			message.setSentDate(new Date());
@@ -147,7 +147,28 @@ public class UserServiceImpl implements UserService {
 		}
 		throw new UserNotFoundByEmail("Please, Enter Valid Email");
 	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<String>> newPassword(String emailAddress, String password) throws MessagingException {
+		User user=repo.findByEmailAddress(emailAddress);
+		user.setEmailAddress(emailAddress);
+		user.setPassword(password);
+		User user2=repo.save(user);
+		
+		ResponseStructure<UserResponseDTO> structure = new ResponseStructure<UserResponseDTO>();
+		UserResponseDTO response = new UserResponseDTO();
+		response.setUserId(user2.getUserId());
+		response.setUserFirstName(user2.getUserFirstName());
+		response.setUserRole(user2.getUserRole().getRoleName());
 
+		structure.setStatusCode(HttpStatus.ACCEPTED.value());
+		structure.setMessage("Password Updated Successfully!!!!");
+		structure.setData(response);
+
+		return new ResponseEntity<ResponseStructure<String>>(HttpStatus.OK);
+	}
+
+	
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateUser(UserRequestDTO userRequestDTO, int userId) {
 		Optional<User> optional = repo.findById(userId);
@@ -221,5 +242,7 @@ public class UserServiceImpl implements UserService {
 		structure.setData(responses);
 		return new ResponseEntity<ResponseStructure<List<UserResponseDTO>>>(structure, HttpStatus.OK);
 	}
+	
+	
 
 }

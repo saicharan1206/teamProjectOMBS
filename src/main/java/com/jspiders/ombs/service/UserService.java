@@ -21,4 +21,6 @@ public interface UserService {
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteUser(int userId);
 	
 	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findAllUser();
+	
+	public ResponseEntity<ResponseStructure<String>> newPassword(String emailAddress, String password)throws MessagingException;
 }

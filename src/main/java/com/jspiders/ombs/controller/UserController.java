@@ -43,6 +43,17 @@ public class UserController {
 			@RequestParam String password) {
 		return service.loginUser(emailAddress, password);
 	}
+	@GetMapping("/new")
+	public ResponseEntity<ResponseStructure<String>> newPassword(@RequestParam String emailAddress,@RequestParam String password) throws MessagingException
+	{
+		return service.newPassword(emailAddress, password);
+	}
+	
+	@PostMapping("/forgot")
+	public ResponseEntity<String> forgotPassword(@RequestParam String email) throws MessagingException
+	{
+		return service.forgotPassword(email);
+	}
 
 	@PutMapping("/{userId}")
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateUser(@RequestBody UserRequestDTO userRequestDTO,@PathVariable
