@@ -1,28 +1,33 @@
 package com.jspiders.ombs.serviceimpl;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.jspiders.ombs.dto.ProductRequestDTO;
+import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
+import com.jspiders.ombs.entity.Product;
 import com.jspiders.ombs.entity.Role;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.User.IsDeleted;
+import com.jspiders.ombs.repository.ProductRepository;
 import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.repository.UserRoleRepository;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.EmailAlreadyFoundException;
 import com.jspiders.ombs.util.exception.IncorrectPasswordException;
+import com.jspiders.ombs.util.exception.ProductAlreadyExistsException;
+import com.jspiders.ombs.util.exception.ProductNotFoundException;
 import com.jspiders.ombs.util.exception.UserNotFoundByEmailException;
 import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
 
@@ -39,10 +44,15 @@ public class UserServiceImpl implements UserService {
 	private UserRoleRepository roleRepo;
 	
 	@Autowired
+	private ProductRepository productRepo;
+	
+	@Autowired
 	private JavaMailSender javaMailSender;
 
 // TO STORE EMAIL TO CHANGE PASSWORD BY USING FORGOT PASSWORD AND CONFIRM NEW PASSWORD
 	String mail;
+	
+	String userAdmin;
 	
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO userRequest) throws MessagingException{
@@ -130,6 +140,10 @@ public class UserServiceImpl implements UserService {
 			System.out.println(email + " " + password);
 			System.out.println(user.getUserEmail() + " " + user.getUserPassword());
 			
+			if(user.getUserRole().getRoleName().equals("admin")) {
+				userAdmin = user.getUserEmail();
+			}
+			
 			String pword = user.getUserPassword();
 			
 			if(password.equals(pword)) {
@@ -171,7 +185,9 @@ public class UserServiceImpl implements UserService {
 			MimeMessage mime = javaMailSender.createMimeMessage();
 			MimeMessageHelper message = new MimeMessageHelper(mime, true);
 			
-			String link = "https://github.com/partharj3/ConfirmPasswordHTML/blob/main/Animation.html";
+//			String link = "http://192.168.43.212:5500/";
+		
+			String link = "http://192.168.43.212:5500/confirmPassword.html";
 			
 			message.setTo(user.getUserEmail());
 			message.setSubject("Link to change password");
@@ -250,6 +266,67 @@ public class UserServiceImpl implements UserService {
 			structure.setMessage("New Password Validated");
 			structure.setData("PASSWORD chnaged Successfully !!");	
 			return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.OK);	
+	}
+
+	
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(ProductRequestDTO prodRequest) {
+		String prodName = prodRequest.getProductName();
+		Product productIs = productRepo.findByProductName(prodName);
+		
+		if(productIs == null) {
+
+			User user = userRepo.findByUserEmail(userAdmin);
+			
+			Product product = new Product();
+			product.setProductName(prodRequest.getProductName());
+			product.setProductPrize(prodRequest.getProductPrize());
+			product.setProductQuantity(prodRequest.getProductQuantity());
+			product.setUser(user);
+			
+			Product savedProd = productRepo.save(product);
+			
+			ProductResponseDTO response = new ProductResponseDTO();
+			response.setProductId(savedProd.getProductId());
+			response.setProductName(savedProd.getProductName());
+			response.setProductQuantity(savedProd.getProductQuantity());
+			
+			ResponseStructure<ProductResponseDTO> structure = new ResponseStructure<ProductResponseDTO>();
+			structure.setStatusCode(HttpStatus.CREATED.value());
+			structure.setMessage("New Product Added");
+			structure.setData(response);
+
+			return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(structure, HttpStatus.CREATED);
+		}
+		throw new ProductAlreadyExistsException("This Product cannot be inserted");
+	}
+	
+
+	@Override
+	public ResponseEntity<ResponseStructure<String>> deleteProduct(int productId) {
+		
+		Optional<Product> product = productRepo.findById(productId);
+		
+		if(product.isPresent()) {
+			Product prod = product.get();
+			productRepo.delete(prod);
+			
+			ResponseStructure<String> structure = new ResponseStructure<String>();
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("Product DELETED");
+			structure.setData(prod.getProductName()+" is removed from List");
+			
+			return new ResponseEntity<ResponseStructure<String>>(structure , HttpStatus.OK);
+		}
+		
+		throw new ProductNotFoundException("Product Deletion is not Supported !!");
+	}
+	
+
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(ProductRequestDTO prodRequest) {
+
+		return null;
 	}
 	
 }

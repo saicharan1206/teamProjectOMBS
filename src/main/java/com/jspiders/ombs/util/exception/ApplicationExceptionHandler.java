@@ -91,4 +91,25 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		
 		return new ResponseEntity<ErrorStructure>(error , HttpStatus.NOT_FOUND);
 	}
+	
+
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> productAlreadyFound(ProductAlreadyExistsException exp){
+		ErrorStructure error = new ErrorStructure();
+		error.setStatusCode(HttpStatus.FOUND.value());
+		error.setMessage(exp.getMessage());
+		error.setRootCause("This Product is already exists !!");
+		
+		return new ResponseEntity<ErrorStructure>(error , HttpStatus.FOUND);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> productNotExists(ProductNotFoundException exp){
+		ErrorStructure error = new ErrorStructure();
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setMessage(exp.getMessage());
+		error.setRootCause("Product not exists!!");
+		
+		return new ResponseEntity<ErrorStructure>(error , HttpStatus.NOT_FOUND);
+	}
 }

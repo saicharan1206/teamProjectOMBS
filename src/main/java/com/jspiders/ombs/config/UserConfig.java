@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "aware")
 public class UserConfig {
-
 	@Bean
 	public AuditorAware<String> aware(){
 		return() -> Optional.of("Partha");

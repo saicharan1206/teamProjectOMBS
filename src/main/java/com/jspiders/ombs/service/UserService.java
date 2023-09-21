@@ -1,6 +1,9 @@
 package com.jspiders.ombs.service;
 
 import org.springframework.http.ResponseEntity;
+
+import com.jspiders.ombs.dto.ProductRequestDTO;
+import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.User;
@@ -27,5 +30,14 @@ public interface UserService {
 	
 	// to CREATE and CONFIRM Password
 	public ResponseEntity<ResponseStructure<String>> confirmNewPassword(String newPasword);
+	
+	// to SAVE a new PRODUCT
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(ProductRequestDTO prodRequest);
+	
+	// to DELETE a PRODUCT
+	public ResponseEntity<ResponseStructure<String>> deleteProduct(int productId);
+	
+	// to UPDATE a PRODUCT
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(ProductRequestDTO prodRequest);
 	
 }
