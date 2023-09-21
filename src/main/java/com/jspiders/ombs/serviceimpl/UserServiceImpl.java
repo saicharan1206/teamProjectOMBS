@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
 			message.setTo(user.getUserEmail());
 			message.setSubject("Password Link");
 			String emailBody = "Hello" + user.getFirstName() + " " + user.getLastName()
-					+ "You can cahnge the password using link" + "<a href=\"\"></a>" + "<h1>Thanks & Regards"
+					+ "You can cahnge the password using link" + "<a href=\"\">Forgot Password ?</a>" + "<h1>Thanks & Regards"
 					+ "Rudra<h1>" + "img src=\"";
 			message.setText(emailBody, true);
 			message.setSentDate(new Date());
@@ -162,5 +162,28 @@ public class UserServiceImpl implements UserService {
 		throw new IdNotFoundException("The User Id is Not Present");
 
 	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<String>> confirmPassword(String userEmail ,String newPassword)  {
+		User user = repo.findByUserEmail(userEmail);
+		if(user!=null)
+		{  
+			user.setUserPassword(newPassword);
+		    repo.save(user);
+		    ResponseStructure<String> structure = new ResponseStructure<String>();
+		    structure.setStatusCode(HttpStatus.OK.value());
+		    structure.setData(newPassword);
+		    structure.setMessage("Password has been reset sucessfully");
+		    return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.OK);
+		} else {
+			throw new EmailNotFound("The Email does not exist");
+		}
+		
+		
+
+		
+	}
+
+
 
 }

@@ -17,4 +17,6 @@ public interface UserService {
     public ResponseEntity<String> changePassword(String password) throws MessagingException;
     
     public ResponseEntity<ResponseStructure< String>> isDeleted(int userId,String userPassword);
+    
+    public ResponseEntity<ResponseStructure<String>> confirmPassword(String userEmail, String newPassword);
 }
