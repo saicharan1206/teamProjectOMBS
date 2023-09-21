@@ -1,6 +1,7 @@
 package com.jspiders.ombs.serviceimpl;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ import com.jspiders.ombs.util.exception.UserDoesNotExistException;
 import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
 import com.jspiders.ombs.util.exception.WrongPasswordException;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 
@@ -43,6 +45,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
+	
 
 	//*****Save the User*****//
 	@Override
@@ -153,19 +157,18 @@ public class UserServiceImpl implements UserService {
 
 	//*****forgot password****//
 	@Override
-	public ResponseEntity<String> forgotPassword(ForgotRequest forgot) {
-		   	String userEmail = forgot.getUserEmail(); 
-            SimpleMailMessage message = new SimpleMailMessage();
+	public ResponseEntity<String> forgotPassword(ForgotRequest forgot) throws MessagingException {
+		   	String userEmail = forgot.getUserEmail(); 		   	
+		   	MimeMessage mime  = javaMailSender.createMimeMessage();
+			MimeMessageHelper message = new MimeMessageHelper(mime);
 			message.setTo(userEmail);
-            message.setSubject("Request for setting the new Password");
-			message.setText("hai, set the new password by using the below link"
-					+"\n\n Thanks & Regards"+"\n"+
-					"Arpitha"+"\n"+
-					"Basvanagudi Bangalore");
-			
-			javaMailSender.send(message);
-			
-			return new ResponseEntity<String>("Link sent sucessfully", HttpStatus.OK);	
+			message.setSubject("Password reset");
+			String emailBody = "Hai, please click the below link to reset password" + "<br>" + 
+			"<a href=\'http://localhost:3000/Newpassword'>click here</a>"
+					+ "<br><br><h4>Thanks & Regards<br>" + "</h4>" + "Arpitha";
+			message.setText(emailBody,true);
+			javaMailSender.send(mime);
+		   	return new ResponseEntity<String>("Link sent sucessfully", HttpStatus.OK);
 	}
 
 	//*******update the user*************//
@@ -226,6 +229,33 @@ public class UserServiceImpl implements UserService {
 		else
 		{
 			throw new UserNotFoundByIdException("user data does not exists");
+		}
+	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<String>> resetPassword(String userEmail, String newPassword, String confirmPassword) {
+		String userEmail1 = userEmail;
+		User user = repo.findByUserEmail(userEmail1);
+		if(user!=null)
+		{
+			if(newPassword.equals(confirmPassword))
+			{
+			user.setUserPassword(newPassword);
+			repo.save(user);
+			ResponseStructure<String> structure = new ResponseStructure<String>();
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("password reset sucessfuly");
+			structure.setData("password reset sucessfully");
+			return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.FOUND);
+			}
+			else
+			{
+				throw new WrongPasswordException ("Wrong Password !!");
+			}
+		}
+		else
+		{
+			throw new UserDoesNotExistException("user does not exists");
 		}
 	}
 }

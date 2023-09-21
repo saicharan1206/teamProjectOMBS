@@ -1,5 +1,7 @@
 package com.jspiders.ombs.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +22,7 @@ import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 
@@ -46,7 +49,7 @@ public class UserController {
 	
 	@CrossOrigin
 	@PostMapping("/forgotpassword")
-	public ResponseEntity<String> forgotPassword(@RequestBody ForgotRequest forgot)
+	public ResponseEntity<String> forgotPassword(@RequestBody ForgotRequest forgot) throws MessagingException
 	{
 		return service.forgotPassword(forgot);
 	}
@@ -62,5 +65,13 @@ public class UserController {
 	{
 		return service.deleteAccount(userId);
 	}
+	
+	@PostMapping("/resetPassword")
+	public ResponseEntity<ResponseStructure<String>> resetPassword(@RequestParam String userEmail, @RequestParam String newPassword, @RequestParam String confirmPassword)
+	{
+		return service.resetPassword(userEmail, newPassword, confirmPassword);
+	}
+	
+
 	
 }

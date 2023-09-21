@@ -41,7 +41,6 @@ public class User {
 	@ManyToOne
 	private UserRole userRole;
 	private IsDeleted isDeleted;
-
 	public IsDeleted getIsDeleted() {
 		return isDeleted;
 	}
