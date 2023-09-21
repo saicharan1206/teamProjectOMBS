@@ -11,6 +11,6 @@ import com.jspiders.ombs.entity.UserRole;
 public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
 	
 	
-	@Query("select u from User u")
-	public List<User> getAllUserDetails();
+	@Query(" select u from UserRole u")
+	public List<UserRole> getAllUserRoles();
 }

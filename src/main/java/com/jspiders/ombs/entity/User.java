@@ -26,7 +26,7 @@ public class User  extends Audit<String> {
 	private String userFirstName;
 	private String userLastName;
 	
-
+	private IsDeleted isDeleted;
 	
 	@ManyToOne
 	private UserRole userRole1;
@@ -68,8 +68,14 @@ public class User  extends Audit<String> {
 	public void setUserRole1(UserRole userRole1) {
 		this.userRole1 = userRole1;
 	}
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 	
-
+	
 	
 
 	

@@ -1,5 +1,6 @@
 package com.jspiders.ombs.dto;
 
+import com.jspiders.ombs.entity.IsDeleted;
 import com.jspiders.ombs.entity.UserRole;
 
 public class UserRequestDTO {
@@ -8,6 +9,15 @@ public class UserRequestDTO {
 	private String userFirstName;
 	private String userLastName;
 	private String userRole;
+	private IsDeleted isDeleted;
+	
+	
+	public IsDeleted getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(IsDeleted isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 	public String getUserEmail() {
 		return userEmail;
 	}
