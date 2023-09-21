@@ -48,4 +48,16 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		return new ResponseEntity(error, HttpStatus.NOT_FOUND);
 		
 	}
+	
+	@ExceptionHandler(ProdcutNotFoundException.class)
+	public ResponseEntity<ErrorStructure> updateuproduct(ProdcutNotFoundException productnotfound, HttpServletRequest httpServletRequest){
+		ErrorStructure error = new ErrorStructure();
+		error.setMessage(productnotfound.getMessage());
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setRootCause(httpServletRequest.getRequestURI());
+		
+		
+		return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+		
+	}
 }
