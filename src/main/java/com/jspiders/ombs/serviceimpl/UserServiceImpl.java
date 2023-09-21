@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(String email, String password) {
 		User user = repo.findByUserEmail(email);
 
-		if (user != null && user.getPassword().equals(password)) {
+		if (user != null && user.getPassword().equals(password) && user.getRole().getUserRole().equals("admin")) {
 			UserResponseDTO response = new UserResponseDTO();
 			response.setUserId(user.getUserId());
 			response.setCreatedBy(user.getCreatedBy());
@@ -115,20 +115,9 @@ public class UserServiceImpl implements UserService {
 		User user = repo.findByUserEmail(email);
 
 		if (user != null) {
-//			SimpleMailMessage message = new SimpleMailMessage();
-//			message.setTo(user.getUserEmail());
-//			message.setSubject("update password ");
-//			message.setText("Please click below link to set new password " + "\n\nThanks & Regards" + "\n"
-//					+ user.getCreatedBy() + "\n");
-//			message.setSentDate(new Date());
-//			javaMailSender.send(message);
-
 			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
 			helper.setSentDate(new Date());
-			//FileSystemResource file=new FileSystemResource(new File("C:\\Users\\Admin\\Pictures\\Saved Pictures\\lion.jpg"));
-			
-		//	helper.addAttachment("lion.jpg", file);
 			helper.setTo(user.getUserEmail());
 			helper.setSubject("update password ");
 			 String emailBody = "Please click below link to set new password "+"<br>"+" <a href=\"http://localhost:3000/pwd/"+user.getUserEmail()+"\">click here</a>"+"<h4>Thanks & Regards<br>"
