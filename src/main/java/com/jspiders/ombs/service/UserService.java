@@ -3,6 +3,8 @@ package com.jspiders.ombs.service;
 import org.springframework.http.ResponseEntity;
 
 import com.jspiders.ombs.dto.MessageData;
+import com.jspiders.ombs.dto.ProductRequestDTO;
+import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.util.ResponseStructure;
@@ -34,6 +36,11 @@ public interface UserService {
 	
 	/** Sending request to SAVE Newly Created Password to that sent Email object */
 	public ResponseEntity<ResponseStructure<String>> createNewPassword(String password);
+	
+//	----------- To Retrieve email -------------
+	public ResponseEntity<String> retrieveEmail(String token);
+	
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(ProductRequestDTO productRequestDTO);
 	
 	
 }

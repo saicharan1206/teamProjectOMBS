@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,9 +61,15 @@ public class UserController {
 		return userService.deleteUserAccount2(userId, userPassword);
 	}
 	
-	@PostMapping("/createNewPassword")
+	@GetMapping("/createNewPassword")
 	public ResponseEntity<ResponseStructure<String>> createNewPassword(@RequestParam String password){
 		return userService.createNewPassword(password);
+	}
+	
+//	-------------------
+	@GetMapping("/retrieve")
+    public ResponseEntity<String> retrieveEmail(@RequestParam String token) {
+		return userService.retrieveEmail(token);
 	}
 	
 

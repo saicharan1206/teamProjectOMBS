@@ -6,11 +6,15 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.jspiders.ombs.dto.MessageData;
+import com.jspiders.ombs.dto.ProductRequestDTO;
+import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.IsDeleted;
+import com.jspiders.ombs.entity.Product;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.User_Role;
+import com.jspiders.ombs.repository.ProductRepository;
 import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.repository.User_Role_Repository;
 import com.jspiders.ombs.service.UserService;
@@ -46,6 +50,9 @@ public class UserServiceImpl implements UserService {
 	private JavaMailSender javaMailSender;
 	
 	private String mailStorage =null;
+	
+	@Autowired
+	private ProductRepository productRepository;
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO userRequestDTO) throws MessagingException {
@@ -172,23 +179,27 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
-//	private Map<String, String> emailStorage = new HashMap<>();
+	private Map<String, String> emailStorage = new HashMap<>();
 	@Override
 	public ResponseEntity<String> changePassword(String email) throws MessagingException {
 		User user = userRepo.findByUserEmail(email);
 		if(user!=null) {
-//			String token = UUID.randomUUID().toString();
-//			emailStorage.put(token, email);
+			String token = UUID.randomUUID().toString();
+			emailStorage.put(token, email);
 			
-//			mailStorage = email;
+			mailStorage = email;
 			
 			MimeMessage mime = javaMailSender.createMimeMessage();
 			MimeMessageHelper message = new MimeMessageHelper(mime,true);
 			message.setTo(email);
 			message.setSubject("Change password");
+//			String link="http://localhost:8080/users/createNewPassword?password=Ljshj@sja12"; 
+			String link = "http://localhost:8080/users/retrieve?token";
+//			String link="http://localhost:52330/AAAA.html";
 			String emailBody = "Hello "+user.getUserFirstName()+" "+user.getUserLastName()+", you can change the Account Password using below link: "
-								+"<a href=\"http://localhost:8080/users\">"+"Click here</a> to visit our website."
-								+"<br><br><h4>Thanks & Regards!</h4>"+
+//								+"<a href=\"http://localhost:8080/users\">"+"Click here</a> to visit our website."
+								+"<a href="+link+">"+link+"</a> to visit our website."
+								+"<br><br><h4>Thanks & Regards!</h4>"+ 
 							  "<h4>"+"Admin of OMB"+"</h4>"+
 							  "<h4>"+"JSpiders @Basavanagudi"+"</h4><br>"+
 							  "<img src=\"https://cdn1.vectorstock.com/i/1000x1000/27/60/medical-pharmacy-logo-design-template-vector-35392760.jpg\" width =\"250\" > ";
@@ -196,7 +207,11 @@ public class UserServiceImpl implements UserService {
 			message.setSentDate(new Date());
 			
 			javaMailSender.send(mime);
-			return new ResponseEntity<String>("Mail sent successfully!!!",HttpStatus.OK);
+//			return new ResponseEntity<String>("Mail sent successfully!!!",HttpStatus.OK);
+			String emailContent = emailStorage.get(token);
+			System.out.println(emailContent+" xyshfs");
+			
+			return ResponseEntity.ok("Email sent with token: " + token);
 		}
 		
 		throw new UserNotFoundByEmailException(email+" is invalid, Please enter valid Email!!!"); 
@@ -259,10 +274,36 @@ public class UserServiceImpl implements UserService {
 		structure.setStatusCode(HttpStatus.OK.value());
 		structure.setMessage("New Password created!!");
 		structure.setData("Password changed successfully!!!");
-		mailStorage = null;
+//		mailStorage = null;
 		System.out.println(mailStorage+" 22222");
 		return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.OK);
 	}
+
+//	---------------------
+	@Override
+	public ResponseEntity<String> retrieveEmail(String token) {
+		String emailContent = emailStorage.get(token);
+		System.out.println(emailContent+" 11111");
+		String mail = mailStorage;
+		System.out.println(mail+" aaaaaaa");
+		User user = userRepo.findByUserEmail(mail);
+		System.out.println(user);
+		if (mail != null) {
+            // Return the email content
+			System.out.println(emailContent+" 2222");
+            return ResponseEntity.ok(mail); 
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(ProductRequestDTO productRequestDTO) {
+		String pName=productRequestDTO.getProdName();
+		Product product = productRepository.findByProdName(pName);
+		return null;
+	}
+	
 	
 }
 
