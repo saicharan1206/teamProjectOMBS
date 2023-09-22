@@ -14,6 +14,7 @@ import com.jspiders.ombs.dto.ForgotPasswordEmail;
 import com.jspiders.ombs.dto.ForgotPasswordEmailResponse;
 import com.jspiders.ombs.dto.LoginResponse;
 import com.jspiders.ombs.dto.LoginVerification;
+import com.jspiders.ombs.dto.PasswordResetRequest;
 import com.jspiders.ombs.dto.UpdateEmail;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
@@ -21,6 +22,7 @@ import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.serviceimpl.UserServiceImpl;
 import com.jspiders.ombs.util.ResponseStructure;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @CrossOrigin
@@ -48,7 +50,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/post/mail/data")
-	public ResponseEntity<ResponseStructure<ForgotPasswordEmailResponse>> forgotPassword (@RequestBody @Valid ForgotPasswordEmail forgotPasswordEmail)
+	public ResponseEntity<ResponseStructure<ForgotPasswordEmailResponse>> forgotPassword (@RequestBody @Valid ForgotPasswordEmail forgotPasswordEmail) throws MessagingException
 	{
 		return userServiceImpl.forgotPassword(forgotPasswordEmail);
 	}
@@ -69,6 +71,12 @@ public class UserController {
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> fetchAllDetailsById (@RequestBody DeleteByIdRequest deleteByIdRequest)
 	{
 		return userService.fetchAllDetailsById (deleteByIdRequest);
+	}
+	
+	@PostMapping("/update/data")
+	public ResponseEntity<ResponseStructure<ForgotPasswordEmailResponse>> updatePassword (@RequestBody @Valid PasswordResetRequest passwordResetRequest)
+	{
+		return userService.updatePassword(passwordResetRequest);
 	}
 	
 }
