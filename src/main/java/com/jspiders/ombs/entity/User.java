@@ -1,6 +1,7 @@
 package com.jspiders.ombs.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,11 +18,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="users")
+@Table(name = "users")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +46,10 @@ public class User {
 	private String updatedBy;
 	@ManyToOne
 	private UserRole userRole;
-	
+
+	@OneToMany
+	private List<Product> products;
+
 	@Enumerated(EnumType.STRING)
 	private IsDeleted deleted;
 
@@ -135,5 +140,13 @@ public class User {
 	public void setDeleted(IsDeleted deleted) {
 		this.deleted = deleted;
 	}
-	
+
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}
+
 }

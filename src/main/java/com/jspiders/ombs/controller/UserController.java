@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jspiders.ombs.dto.ProductRequestDTO;
+import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
@@ -26,19 +28,19 @@ import jakarta.validation.Valid;
 
 @RestController
 @Validated
-@RequestMapping("/users")
+@RequestMapping("/details")
 @CrossOrigin
 public class UserController {
 	@Autowired
 	private UserService service;
 
-	@PostMapping
+	@PostMapping("/{users}")
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@RequestBody @Valid UserRequestDTO userRequestDTO)
 			throws MessagingException {
 		return service.saveUser(userRequestDTO);
 	}
 
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public ResponseEntity<ResponseStructure<String>> loginUser(@RequestParam String emailAddress,
 			@RequestParam String password) {
 		return service.loginUser(emailAddress, password);
@@ -70,5 +72,29 @@ public class UserController {
 	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findAllUser()
 	{
 		return service.findAllUser();
+	}
+	
+	@PostMapping("/save")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(@RequestBody @Valid ProductRequestDTO productRequestDTO)
+	{
+		return service.saveProduct(productRequestDTO);
+	}
+	
+	@PutMapping("/{pId}")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(@RequestBody @Valid ProductRequestDTO productRequestDTO,int pId)
+	{
+		return service.updateProduct(productRequestDTO,pId);
+	}
+	
+	@DeleteMapping("/{pId}")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(@PathVariable int pId)
+	{
+		return service.deleteProduct(pId);
+	}
+	
+	@GetMapping("/{product}")
+	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> findAllProduct()
+	{
+		return service.findAllProduct();
 	}
 }

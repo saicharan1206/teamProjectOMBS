@@ -11,11 +11,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import com.jspiders.ombs.dto.ProductRequestDTO;
+import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.IsDeleted;
+import com.jspiders.ombs.entity.Product;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.UserRole;
+import com.jspiders.ombs.repository.ProductRepository;
 import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.repository.UserRoleRepository;
 import com.jspiders.ombs.service.UserService;
@@ -34,6 +39,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRoleRepository reporole;
+	
+	@Autowired
+	private ProductRepository productRepo;
+	
 	@Autowired
 	private JavaMailSender javaMailSender;
 
@@ -243,6 +252,102 @@ public class UserServiceImpl implements UserService {
 		return new ResponseEntity<ResponseStructure<List<UserResponseDTO>>>(structure, HttpStatus.OK);
 	}
 	
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(ProductRequestDTO productRequestDTO) {
+		Product product=new Product();
+		product.setpName(productRequestDTO.getpName());
+		product.setPrice(productRequestDTO.getPrice());
+		product.setQuantity(productRequestDTO.getQuantity());
+		product.setmDate(productRequestDTO.getmDate());
+		
+		Product product2 = productRepo.save(product);
+
+		ProductResponseDTO response = new ProductResponseDTO();
+		response.setpId(product2.getpId());
+		response.setpName(product2.getpName());
+		response.setPrice(product2.getPrice());
+
+		ResponseStructure<ProductResponseDTO> structure = new ResponseStructure<ProductResponseDTO>();
+		structure.setStatusCode(HttpStatus.CREATED.value());
+		structure.setMessage("Product Data Saved Successfully!!");
+		structure.setData(response);
+		return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(structure, HttpStatus.CREATED);
+	}
 	
+	
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(ProductRequestDTO productRequestDTO,
+			int pId) {
+		Optional<Product> optional = productRepo.findById(pId);
+		if (optional.isPresent()) {
+			Product product = optional.get();
+			Product product2 = new Product();
+			product2.setpName(productRequestDTO.getpName());
+			product2.setPrice(productRequestDTO.getPrice());
+			product2.setQuantity(productRequestDTO.getQuantity());
+			product2.setmDate(productRequestDTO.getmDate());
+
+			product.setpId(pId);
+			Product produc2 = productRepo.save(product);
+
+			ResponseStructure<ProductResponseDTO> structure = new ResponseStructure<ProductResponseDTO>();
+
+			ProductResponseDTO response = new ProductResponseDTO();
+			response.setpId(produc2.getpId());
+			response.setpName(produc2.getpName());
+			response.setPrice(produc2.getPrice());
+
+			structure.setStatusCode(HttpStatus.ACCEPTED.value());
+			structure.setMessage("Product Data Updated Successfully!!!!");
+			structure.setData(response);
+
+			return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(structure, HttpStatus.OK);
+		} else {
+			return null;
+		}
+	
+	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(int pId) {
+		ResponseStructure<ProductResponseDTO> structure = new ResponseStructure<ProductResponseDTO>();
+		Optional<Product> optional = Optional.of(productRepo.findById(pId).orElse(null));
+		if (optional.isPresent()) {
+			Product product = optional.get();
+			product.setDeleted(IsDeleted.TRUE);
+			product = productRepo.save(product);
+			ProductResponseDTO response = new ProductResponseDTO();
+			response.setpId(product.getpId());
+			response.setpName(product.getpName());
+			response.setPrice(product.getPrice());
+
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("Product Data Successfully Deleted!!");
+			structure.setData(response);
+		
+			return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(HttpStatus.OK);
+		} else {
+			throw new UserNotFoundByIdException("Failed To Delete the User Details");
+		}
+	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> findAllProduct() {
+		List<Product> products = productRepo.findAll();
+		List<ProductResponseDTO> responses = new ArrayList<>();
+		for (Product product : products) {
+			ProductResponseDTO response = new ProductResponseDTO();
+			response.setpId(product.getpId());
+			response.setpName(product.getpName());
+			response.setPrice(product.getPrice());
+			
+			responses.add(response);
+		}
+		ResponseStructure<List<ProductResponseDTO>> structure = new ResponseStructure<List<ProductResponseDTO>>();
+		structure.setStatusCode(HttpStatus.OK.value());
+		structure.setMessage("User Details!!!!");
+		structure.setData(responses);
+		return new ResponseEntity<ResponseStructure<List<ProductResponseDTO>>>(structure, HttpStatus.OK);
+	}
 
 }
