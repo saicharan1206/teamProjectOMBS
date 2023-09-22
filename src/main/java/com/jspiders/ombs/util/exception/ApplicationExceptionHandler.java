@@ -63,6 +63,16 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	}
 	
 	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> invalidUser(UnAuthorizedUserException exp){
+		ErrorStructure error = new ErrorStructure();
+		error.setStatusCode(HttpStatus.NOT_FOUND.value());
+		error.setMessage(exp.getMessage());
+		error.setRootCause("No Permitted for this User");
+		
+		return new ResponseEntity<ErrorStructure>(error , HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler
 	public ResponseEntity<ErrorStructure> userEmailNotExists(UserNotFoundByEmailException exp){
 		ErrorStructure error = new ErrorStructure();
 		error.setStatusCode(HttpStatus.NOT_FOUND.value());

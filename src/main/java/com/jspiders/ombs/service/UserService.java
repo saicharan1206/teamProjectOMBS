@@ -1,5 +1,7 @@
 package com.jspiders.ombs.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 import com.jspiders.ombs.dto.ProductRequestDTO;
@@ -22,22 +24,24 @@ public interface UserService {
 	// Forgot Password
 	public ResponseEntity<String> changePassword(String email) throws MessagingException;
 	
-	// DELETE operation by ADMIN
-	public ResponseEntity<String> submitUserId(int userId);
-	
 	// Confirm PASSWORD from User
 	public ResponseEntity<ResponseStructure<String>> confirmDeleteMyAccount(int id, String password);
 	
 	// to CREATE and CONFIRM Password
-	public ResponseEntity<ResponseStructure<String>> confirmNewPassword(String newPasword);
+	public ResponseEntity<ResponseStructure<String>> confirmNewPassword(int userId,String newPasword);
 	
 	// to SAVE a new PRODUCT
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(ProductRequestDTO prodRequest);
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(int userId, ProductRequestDTO prodRequest);
 	
 	// to DELETE a PRODUCT
-	public ResponseEntity<ResponseStructure<String>> deleteProduct(int productId);
+	public ResponseEntity<ResponseStructure<String>> deleteProduct(int userId, int productId);
 	
 	// to UPDATE a PRODUCT
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(ProductRequestDTO prodRequest);
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(int id,ProductRequestDTO prodRequest);
+	
+	// to GET LIST of PRODUCTS
+	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> productList();
+	
+	
 	
 }

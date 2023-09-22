@@ -2,15 +2,15 @@ package com.jspiders.ombs.dto;
 
 public class ProductResponseDTO {
 
-	private int productId;
+	private String productCode;
 	private String productName;
 	private double productQuantity;
 	
-	public int getProductId() {
-		return productId;
+	public String getProductCode() {
+		return productCode;
 	}
-	public void setProductId(int productId) {
-		this.productId = productId;
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
 	}
 	public String getProductName() {
 		return productName;

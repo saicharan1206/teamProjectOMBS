@@ -1,5 +1,7 @@
 package com.jspiders.ombs.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jspiders.ombs.dto.ProductRequestDTO;
+import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
@@ -51,8 +55,28 @@ public class UserController {
 	}
 	
 	@PostMapping("/confirmNewPassword")
-	public ResponseEntity<ResponseStructure<String>> confirmNewPassword(@RequestParam String newPassword){
-		return service.confirmNewPassword(newPassword);
+	public ResponseEntity<ResponseStructure<String>> confirmNewPassword(@RequestParam int id,String newPassword){
+		return service.confirmNewPassword(id,newPassword);
+	}
+	
+	@PostMapping("/product/addproduct")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(@RequestParam int userId,@RequestBody @Valid ProductRequestDTO prodRequest){
+		return service.addProduct(userId, prodRequest);
+	}
+	
+	@PostMapping("/product/deleteProduct")
+	public ResponseEntity<ResponseStructure<String>> deleteProduct(@RequestParam int userId, int productId){
+		return service.deleteProduct(userId, productId);
+	}
+	
+	@PostMapping("/product/updateProduct")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(@RequestParam int userId,@RequestBody @Valid ProductRequestDTO prodRequest){
+		return service.updateProduct(userId, prodRequest);
+	}
+	
+	@PostMapping("/product")
+	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> productList(){
+		return service.productList();
 	}
 	
 }

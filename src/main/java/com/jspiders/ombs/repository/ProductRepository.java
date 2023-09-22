@@ -5,6 +5,6 @@ import com.jspiders.ombs.entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Integer>{
 
-	public Product findByProductName(String name);
+	public Product findByProductCode(String name);
 	
 }
