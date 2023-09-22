@@ -13,4 +13,6 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
 	@Query("select u from UserRole u")
 	public List<UserRole> getAllUserRoles();
 
+	public UserRole findByUserRole(String userRole);
+
 }

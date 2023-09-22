@@ -36,7 +36,35 @@ public class User extends Audit<String>{
 	private String userLastName;
 	private String userEmail;
 	private String userPassword;
+	private LocalDateTime createdDateTime;
+	private String createdBy;
+	private LocalDateTime updatedDateTime;
+	private String updatedBy;
 	
+	public LocalDateTime getCreatedDateTime() {
+		return createdDateTime;
+	}
+	public void setCreatedDateTime(LocalDateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
+	}
+	public String getCreatedBy() {
+		return createdBy;
+	}
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+	public LocalDateTime getUpdatedDateTime() {
+		return updatedDateTime;
+	}
+	public void setUpdatedDateTime(LocalDateTime updatedDateTime) {
+		this.updatedDateTime = updatedDateTime;
+	}
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
 	private IsDeleted isDeleted;
 	
 	@ManyToOne

@@ -20,6 +20,9 @@ public class UserRole {
 	private int useRroleId;
 	private String userRole;
 	
+	@OneToMany(mappedBy = "userRole1")
+	private List<User> user;
+	
 //	@OneToMany(mappedBy = "role")
 //	private List<User> users;
 	
@@ -35,5 +38,12 @@ public class UserRole {
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
+	public List<User> getUser() {
+		return user;
+	}
+	public void setUser(List<User> user) {
+		this.user = user;
+	}
+	
 	
 }

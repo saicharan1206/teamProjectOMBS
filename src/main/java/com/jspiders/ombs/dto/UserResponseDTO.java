@@ -14,11 +14,46 @@ import lombok.Data;
 @Component
 public class UserResponseDTO {
 
+	private int userId;
 	private String userFirstName;
 	private String userLastName;
 	private String userEmail;
 	private String userRole;
+	private LocalDateTime createdDateTime;
+	private String createdBy;
+	private LocalDateTime updatedDateTime;
+	private String updatedBy;
 	
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	public LocalDateTime getCreatedDateTime() {
+		return createdDateTime;
+	}
+	public void setCreatedDateTime(LocalDateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
+	}
+	public String getCreatedBy() {
+		return createdBy;
+	}
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+	public LocalDateTime getUpdatedDateTime() {
+		return updatedDateTime;
+	}
+	public void setUpdatedDateTime(LocalDateTime updatedDateTime) {
+		this.updatedDateTime = updatedDateTime;
+	}
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
 	public String getUserFirstName() {
 		return userFirstName;
 	}
