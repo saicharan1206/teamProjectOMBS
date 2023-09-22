@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jspiders.ombs.dto.ForgotRequest;
 import com.jspiders.ombs.dto.LoginRequest;
 import com.jspiders.ombs.dto.LoginResponse;
+import com.jspiders.ombs.dto.ProductRequest;
+import com.jspiders.ombs.dto.ProductResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.service.UserService;
@@ -41,7 +43,7 @@ public class UserController {
 	}
 	
 	@CrossOrigin
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public ResponseEntity<ResponseStructure<LoginResponse>> loginUser(@RequestBody LoginRequest login)
 	{
 		return service.loginUser(login);
@@ -66,10 +68,18 @@ public class UserController {
 		return service.deleteAccount(userId);
 	}
 	
+	@CrossOrigin
 	@PostMapping("/resetPassword")
 	public ResponseEntity<ResponseStructure<String>> resetPassword(@RequestParam String userEmail, @RequestParam String newPassword, @RequestParam String confirmPassword)
 	{
 		return service.resetPassword(userEmail, newPassword, confirmPassword);
+	}
+	
+	@CrossOrigin
+	@PostMapping("/products")
+	public ResponseEntity<ResponseStructure<ProductResponse>> saveProduct(@RequestBody ProductRequest product)
+	{
+		return service.saveProduct(product);
 	}
 	
 

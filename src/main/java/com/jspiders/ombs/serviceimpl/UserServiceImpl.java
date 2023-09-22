@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,15 @@ import org.springframework.stereotype.Service;
 import com.jspiders.ombs.dto.ForgotRequest;
 import com.jspiders.ombs.dto.LoginRequest;
 import com.jspiders.ombs.dto.LoginResponse;
+import com.jspiders.ombs.dto.ProductRequest;
+import com.jspiders.ombs.dto.ProductResponse;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.IsDeleted;
+import com.jspiders.ombs.entity.Product;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.UserRole;
+import com.jspiders.ombs.repository.ProductRepository;
 import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.repository.UserRoleRepo;
 import com.jspiders.ombs.service.UserService;
@@ -46,7 +51,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
-	
+	@Autowired
+	private ProductRepository productrepo;
 
 	//*****Save the User*****//
 	@Override
@@ -257,5 +263,32 @@ public class UserServiceImpl implements UserService {
 		{
 			throw new UserDoesNotExistException("user does not exists");
 		}
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponse>> saveProduct(ProductRequest product) {
+		Product product1 = new Product();
+		if(product!=null)
+		{
+			product1.setProductName(product.getProductName());
+			product1.setProductQuantity(product.getProductQuantity());
+			product1.setProductPrice(product.getProductPrice());
+			Product product2 = productrepo.save(product1);
+			
+			ProductResponse response = new ProductResponse();
+			response.setProductId(product2.getProductId());
+			response.setProductName(product2.getProductName());
+			response.setProductQuantity(product2.getProductQuantity());
+			response.setProductPrice(product2.getProductPrice());
+			
+			ResponseStructure<ProductResponse> structure = new ResponseStructure<ProductResponse>();
+			structure.setStatusCode(HttpStatus.CREATED.value());
+			structure.setMessage("product add sucessfully");
+			structure.setData(response);
+			
+			return new ResponseEntity<ResponseStructure<ProductResponse>>(structure,HttpStatus.CREATED);
+			
+		}
+		return null;
 	}
 }
