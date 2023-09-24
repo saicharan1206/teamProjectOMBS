@@ -63,7 +63,5 @@ public interface UserService {
 	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> getAllProducts();
 	
 	
-	
-	
 }
 
