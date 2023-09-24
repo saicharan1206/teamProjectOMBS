@@ -2,33 +2,33 @@ package com.jspiders.ombs.dto;
 
 public class ProductResponseDTO {
 	
-	private int prodId;
-	private String prodName;
-	private double prodPrice;
-	private int prodQty;
-	public int getProdId() {
-		return prodId;
+	private int productId;
+	private String productName;
+	private double productPrice;
+	private int productQty;
+	public int getProductId() {
+		return productId;
 	}
-	public void setProdId(int prodId) {
-		this.prodId = prodId;
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
-	public String getProdName() {
-		return prodName;
+	public String getProductName() {
+		return productName;
 	}
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
-	public double getProdPrice() {
-		return prodPrice;
+	public double getProductPrice() {
+		return productPrice;
 	}
-	public void setProdPrice(double prodPrice) {
-		this.prodPrice = prodPrice;
+	public void setProductPrice(double productPrice) {
+		this.productPrice = productPrice;
 	}
-	public int getProdQty() {
-		return prodQty;
+	public int getProductQty() {
+		return productQty;
 	}
-	public void setProdQty(int prodQty) {
-		this.prodQty = prodQty;
+	public void setProductQty(int productQty) {
+		this.productQty = productQty;
 	}
 
 }

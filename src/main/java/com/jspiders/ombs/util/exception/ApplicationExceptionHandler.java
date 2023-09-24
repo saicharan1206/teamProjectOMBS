@@ -51,7 +51,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<ErrorStructure> userNotFoundByEmail(UserNotFoundByEmailException ex){
 		ErrorStructure structure = new ErrorStructure();
 		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-		structure.setMessage("User doesnot found!!!");
+		structure.setMessage(ex.getMessage());
 		structure.setRootCause("User with requested Email doesnot exist!!!");
 		return new ResponseEntity<ErrorStructure>(structure, HttpStatus.NOT_FOUND);
 	}
@@ -60,7 +60,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<ErrorStructure> userNotFoundById(UserNotFoundByIdException ex){
 		ErrorStructure structure = new ErrorStructure();
 		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-		structure.setMessage("User Account is not deleted!!!");
+		structure.setMessage(ex.getMessage());
 		structure.setRootCause("User with requested id doesnot exist!!!!");
 		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_FOUND);
 	}
@@ -69,10 +69,56 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	public ResponseEntity<ErrorStructure> incorrectPassword(IncorrectPasswordException ex){
 		ErrorStructure structure = new ErrorStructure();
 		structure.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
-		structure.setMessage("User Account is not deleted!!!");
+		structure.setMessage(ex.getMessage());
 		structure.setRootCause("You have entered incorrect password, Please enter correct password!!!!");
 		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_ACCEPTABLE);
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> productExist(ProductAlreadyExistException ex){
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.FOUND.value());
+		structure.setMessage(ex.getMessage());
+		structure.setRootCause("This Product is Already Present!!!");
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.FOUND);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> productNotFound(ProductNotFoundException ex){
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		structure.setMessage(ex.getMessage());
+		structure.setRootCause("Products doesnot exist!!!");
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> youRNotAdmin(YouAreNotAAdminException ex){
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+		structure.setMessage(ex.getMessage());
+		structure.setRootCause("You are not a Admin!!!");
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_ACCEPTABLE);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> productNotFoundByName(ProductNotFoundByProductName ex){
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		structure.setMessage(ex.getMessage());
+		structure.setRootCause("This Product doesn't exist!!!");
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> userEmailNotInCookie(UserEmailNotFoundInCookieException ex){
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		structure.setMessage(ex.getMessage());
+		structure.setRootCause("Cookie doesn't contain any user data!!!");
+		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.NOT_FOUND);
+	}
+	
 
 }
 

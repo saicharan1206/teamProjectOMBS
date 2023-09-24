@@ -7,30 +7,30 @@ public class ProductRequestDTO {
 	
 	@NotBlank(message = "Product Name cannot be Blank!!")
 	@NotNull(message = "Product Name cannot be Null!!")
-	private String prodName;
+	private String productName;
 	@NotBlank(message = "Product Price cannot be Blank!!")
 	@NotNull(message = "Product Price cannot be Null!!")
-	private double prodPrice;
+	private double productPrice;
 	@NotBlank(message = "Product Quantity cannot be Blank!!")
 	@NotNull(message = "Product Quantity cannot be Null!!")
-	private int prodQty;
-	public String getProdName() {
-		return prodName;
+	private int productQty;
+	public String getProductName() {
+		return productName;
 	}
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
-	public double getProdPrice() {
-		return prodPrice;
+	public double getProductPrice() {
+		return productPrice;
 	}
-	public void setProdPrice(double prodPrice) {
-		this.prodPrice = prodPrice;
+	public void setProductPrice(double productPrice) {
+		this.productPrice = productPrice;
 	}
-	public int getProdQty() {
-		return prodQty;
+	public int getProductQty() {
+		return productQty;
 	}
-	public void setProdQty(int prodQty) {
-		this.prodQty = prodQty;
+	public void setProductQty(int productQty) {
+		this.productQty = productQty;
 	}
 
 }
