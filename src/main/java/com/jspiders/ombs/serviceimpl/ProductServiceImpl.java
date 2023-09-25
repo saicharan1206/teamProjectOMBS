@@ -12,71 +12,86 @@ import org.springframework.stereotype.Service;
 import com.jspiders.ombs.dto.ProductRequestDTO;
 import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.entity.Product;
+import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.repository.ProductRepository;
+import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.service.ProductService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.ProductNotFoundException;
+import com.jspiders.ombs.util.exception.UserNotFoundException;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductRepository repo;
-	
+
+	@Autowired
+	private UserRepository repo1;
+
 	@Override
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(ProductRequestDTO requestDTO) {
-		Product pro = new Product();
-		pro.setProductName(requestDTO.getProductName());
-		pro.setProductPrice(requestDTO.getProductPrice());
-		pro.setProductQuantity(requestDTO.getProductQuantity());
-		
-	pro=	repo.save(pro);
-		ProductResponseDTO dto = new ProductResponseDTO();
-		dto.setProductId(pro.getProductId());
-		dto.setProductName(pro.getProductName());
-		dto.setProductPrice(pro.getProductPrice());
-		
-		ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
-		responseStructure.setData(dto);
-		responseStructure.setMessage("Product added successfully!!");
-		responseStructure.setStatusCode(HttpStatus.CREATED.value());
-		return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(responseStructure,HttpStatus.CREATED);
-	}
-	@Override
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(ProductRequestDTO requestDTO,int id) {
-		Optional<Product> findById = repo.findById(id);
-		if(findById.isPresent())
-		{
-			Product product = findById.get();
-			product.setProductPrice(requestDTO.getProductPrice());
-			product.setProductQuantity(requestDTO.getProductQuantity());
-			repo.save(product);
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(ProductRequestDTO requestDTO, int userid) {
+		Optional<User> findById = repo1.findById(userid);
+		boolean equals = findById.get().getRole().getUserRole().equals("admin");
+		if (equals) {
+			Product pro = new Product();
+			pro.setProductName(requestDTO.getProductName());
+			pro.setProductPrice(requestDTO.getProductPrice());
+			pro.setProductQuantity(requestDTO.getProductQuantity());
+			pro.setUser(findById.get());
+			pro = repo.save(pro);
 			
 			ProductResponseDTO dto = new ProductResponseDTO();
-			dto.setProductId(product.getProductId());
-			dto.setProductName(product.getProductName());
-			dto.setProductPrice(product.getProductPrice());
-			
+			dto.setProductId(pro.getProductId());
+			dto.setProductName(pro.getProductName());
+			dto.setProductPrice(pro.getProductPrice());
+
 			ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
 			responseStructure.setData(dto);
 			responseStructure.setMessage("Product added successfully!!");
 			responseStructure.setStatusCode(HttpStatus.CREATED.value());
-			return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(responseStructure,HttpStatus.CREATED);
+			return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(responseStructure, HttpStatus.CREATED);
 		}
-		
+		throw new UserNotFoundException("user id not found!!");
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(ProductRequestDTO requestDTO, int id) {
+		Optional<Product> findById = repo.findById(id);
+		if (findById.isPresent()) {
+			Product product = findById.get();
+			product.setProductPrice(requestDTO.getProductPrice());
+			product.setProductQuantity(requestDTO.getProductQuantity());
+			repo.save(product);
+
+			ProductResponseDTO dto = new ProductResponseDTO();
+			dto.setProductId(product.getProductId());
+			dto.setProductName(product.getProductName());
+			dto.setProductPrice(product.getProductPrice());
+
+			ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
+			responseStructure.setData(dto);
+			responseStructure.setMessage("Product added successfully!!");
+			responseStructure.setStatusCode(HttpStatus.CREATED.value());
+			return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(responseStructure, HttpStatus.CREATED);
+		}
 		throw new ProductNotFoundException("product not found!!");
 	}
+
 	@Override
-	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> products() {
+	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> products(int userid) {
 		List<Product> all = repo.findAll();
 		List<ProductResponseDTO> list = new ArrayList<>();
-		if(!all.isEmpty())
-		{
+		if (!all.isEmpty()) {
 			for (Product product : all) {
+				if(product.getUser().getUserId()==userid)
+				{
 				ProductResponseDTO dto = new ProductResponseDTO();
 				dto.setProductId(product.getProductId());
 				dto.setProductName(product.getProductName());
 				dto.setProductPrice(product.getProductPrice());
 				list.add(dto);
+				}
 			}
 			ResponseStructure<List<ProductResponseDTO>> structure = new ResponseStructure<>();
 			structure.setData(list);
@@ -86,27 +101,32 @@ public class ProductServiceImpl implements ProductService {
 		}
 		throw new ProductNotFoundException("product not found!!");
 	}
+
 	@Override
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(int productid) {
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(int userid, int productid) {
+		Optional<User> findBy = repo1.findById(userid);
+		boolean equals = findBy.get().getRole().getUserRole().equals("admin");
 		Optional<Product> findById = repo.findById(productid);
-		if(findById.isPresent())
-		{
-			Product product = findById.get();
-			repo.delete(product);
-			
-			ProductResponseDTO dto = new ProductResponseDTO();
-			dto.setProductId(product.getProductId());
-			dto.setProductName(product.getProductName());
-			dto.setProductPrice(product.getProductPrice());
-			
-			ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
-			responseStructure.setData(dto);
-			responseStructure.setMessage("Product deleted successfully!!");
-			responseStructure.setStatusCode(HttpStatus.ACCEPTED.value());
-			return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(responseStructure,HttpStatus.ACCEPTED);
-			
+		if (equals) {
+			if (findById.isPresent()) {
+				Product product = findById.get();
+				repo.delete(product);
+
+				ProductResponseDTO dto = new ProductResponseDTO();
+				dto.setProductId(product.getProductId());
+				dto.setProductName(product.getProductName());
+				dto.setProductPrice(product.getProductPrice());
+
+				ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
+				responseStructure.setData(dto);
+				responseStructure.setMessage("Product deleted successfully!!");
+				responseStructure.setStatusCode(HttpStatus.ACCEPTED.value());
+				return new ResponseEntity<ResponseStructure<ProductResponseDTO>>(responseStructure,
+						HttpStatus.ACCEPTED);
+			}
+			throw new ProductNotFoundException("product not found!!");
 		}
-		throw new ProductNotFoundException("product not found!!");
+		throw new UserNotFoundException("user id not found!!");
 	}
 
 }

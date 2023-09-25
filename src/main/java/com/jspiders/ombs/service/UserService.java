@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.jspiders.ombs.dto.ForgotEmailResponse;
+import com.jspiders.ombs.dto.LoginDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.User;
@@ -17,18 +18,17 @@ public interface UserService {
 
 	ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@Valid UserRequestDTO requestDTO);
 
-	ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(String email, String password);
+	ResponseEntity<ResponseStructure<UserResponseDTO>> getUserByEmailByPassword(LoginDTO login);
 
-	ResponseEntity<ResponseStructure<ForgotEmailResponse>> getUserByEmail(String email) throws MessagingException;
+	ResponseEntity<ResponseStructure<ForgotEmailResponse>> sendConfirmationEntityMail(String email) throws MessagingException;
 
 	ResponseEntity<ResponseStructure<UserResponseDTO>> deleteByEmail(String email);
 
 	ResponseEntity<ResponseStructure<UserResponseDTO>> updateByEmail(@Valid UserRequestDTO requestDTO);
 
-	ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findAllUser();
+	ResponseEntity<ResponseStructure<List<UserResponseDTO>>> getAllUsers();
 
-	ResponseEntity<ResponseStructure<UserResponseDTO>> updatePassword(String email, String pwd,
-			String confirmPwd);
+	ResponseEntity<ResponseStructure<UserResponseDTO>> resetPassword(String email, String pwd);
 
 
 

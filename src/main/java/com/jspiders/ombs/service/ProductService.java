@@ -10,12 +10,12 @@ import com.jspiders.ombs.util.ResponseStructure;
 
 public interface ProductService {
 
-	ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(ProductRequestDTO requestDTO);
+	ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(ProductRequestDTO requestDTO, int userid);
 
 	ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(ProductRequestDTO requestDTO, int productid);
 
-	ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> products();
+	ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> products(int userid);
 
-	ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(int productid);
+	ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(int userid, int productid);
 
 }

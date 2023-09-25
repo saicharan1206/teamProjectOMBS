@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.jspiders.ombs.dto.ForgotEmailResponse;
+import com.jspiders.ombs.dto.LoginDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.User;
@@ -87,10 +88,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(String email, String password) {
-		User user = repo.findByUserEmail(email);
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUserByEmailByPassword(LoginDTO login) {
+		User user = repo.findByUserEmail(login.getUserEmail());
 
-		if (user != null && user.getPassword().equals(password) && user.getRole().getUserRole().equals("admin")) {
+		if (user != null && user.getPassword().equals(login.getPassword()) ) {
 			UserResponseDTO response = new UserResponseDTO();
 			response.setUserId(user.getUserId());
 			response.setCreatedBy(user.getCreatedBy());
@@ -111,7 +112,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> getUserByEmail(String email) throws MessagingException {
+	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> sendConfirmationEntityMail(String email) throws MessagingException {
 		User user = repo.findByUserEmail(email);
 
 		if (user != null) {
@@ -146,7 +147,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteByEmail(String email) {
 		User user = repo.findByUserEmail(email);
-		if (user != null && user.getRole().getUser().equals("admin")) {
+		if (user != null && user.getRole().getUserRole().equalsIgnoreCase("admin")) {
 			user.setIsDeleted(IsDeleted.TRUE);
 			repo.save(user);
 
@@ -200,12 +201,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findAllUser() {
+	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> getAllUsers() {
 		List<User> findAll = repo.findAll();
 		if (!findAll.isEmpty()) {
 			Vector<UserResponseDTO> usersDtos = new Vector();
 			for (User user : findAll) {
-				if (user.getRole().getUserRole().equalsIgnoreCase("admin")) {
+				if (user.getRole().getUserRole().equalsIgnoreCase("admin") && user.getIsDeleted().equals(IsDeleted.FALSE)) {
 					UserResponseDTO response = new UserResponseDTO();
 					response.setUserId(user.getUserId());
 					response.setCreatedBy(user.getCreatedBy());
@@ -219,12 +220,11 @@ public class UserServiceImpl implements UserService {
 					response.setUserLastName(user.getUserLastName());
 
 					usersDtos.add(response);
-
 				}
 			}
 			ResponseStructure<List<UserResponseDTO>> structure = new ResponseStructure<>();
 			structure.setData(usersDtos);
-			structure.setMessage("User data deleted successfully!!!");
+			structure.setMessage("User data fetched successfully!!!");
 			structure.setStatusCode(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<List<UserResponseDTO>>>(structure, HttpStatus.CREATED);
 		}
@@ -232,20 +232,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> updatePassword(String email, String pwd,
-			String confirmPwd) {
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> resetPassword(String email, String pwd) {
 		User user = repo.findByUserEmail(email.toLowerCase());
 		if(user!=null )
 		{
-			if(pwd.equals(confirmPwd))
-			{
-			user.setPassword(confirmPwd);
+			user.setPassword(pwd);
 			repo.save(user);
-			}
-			else 
-				{
-					throw new UserNotFoundByIdException("Password missmatch!!");
-				}
 			
 			UserResponseDTO responseDTO = new UserResponseDTO();
 			responseDTO.setUserId(user.getUserId());

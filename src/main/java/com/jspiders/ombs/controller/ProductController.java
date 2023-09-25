@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,29 +19,30 @@ import com.jspiders.ombs.service.ProductService;
 import com.jspiders.ombs.util.ResponseStructure;
 
 @RestController
+@CrossOrigin
 public class ProductController {
 	@Autowired
 	private ProductService service;
 	
-	@PostMapping("/product")
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(@RequestBody ProductRequestDTO requestDTO)
+	@PostMapping("/users/{userid}/products")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(@RequestBody ProductRequestDTO requestDTO,@PathVariable int userid)
 	{
-		return service.addProduct(requestDTO);
+		return service.saveProduct(requestDTO,userid);
 	}
 	
-	@PutMapping("/prduct/{productid}/update")
+	@PutMapping("/products/{productid}")
 	public ResponseEntity<ResponseStructure<ProductResponseDTO>> updateProduct(@RequestBody ProductRequestDTO requestDTO,@PathVariable int productid)
 	{
 		return service.updateProduct(requestDTO,productid);
 	}
-	@GetMapping("/products")
-	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> products()
+	@GetMapping("/users/{userid}/products")
+	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> products(@PathVariable int userid)
 	{
-		return service.products();
+		return service.products(userid);
 	}
-	@DeleteMapping("/product/{productid}/delete")
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(@PathVariable int productid)
+	@DeleteMapping("/users/{userid}/products/{productid}")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(@PathVariable int userid,@PathVariable int productid)
 	{
-		return service.deleteProduct(productid);
+		return service.deleteProduct(userid,productid);
 	}
 }

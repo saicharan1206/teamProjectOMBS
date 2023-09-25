@@ -1,5 +1,7 @@
 package com.jspiders.ombs.entity;
 
+import java.util.List;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.jspiders.ombs.enums.IsDeleted;
@@ -12,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -33,5 +36,7 @@ public class User extends Auditing{
 	private UserRole role;
 	
 	IsDeleted isDeleted;
+	@OneToMany(mappedBy = "user")
+	private List<Product> products;
 
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jspiders.ombs.dto.ForgotEmailResponse;
+import com.jspiders.ombs.dto.LoginDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.User;
@@ -30,41 +31,39 @@ public class UserController {
 	@Autowired
 	private UserService service;
 
-	@PostMapping("/user")
+	@PostMapping("/users")
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@RequestBody @Valid UserRequestDTO requestDTO) {
 		return service.saveUser(requestDTO);
-
 	}
 
-	@GetMapping("/user/{email}/{password}")
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(@PathVariable String email,
-			@PathVariable String password) {
-		return service.getUser(email, password);
+	@PostMapping("/users/login")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUserByEmailByPassword(@RequestBody @Valid LoginDTO login) {
+		return service.getUserByEmailByPassword(login);
 	}
 
-	@GetMapping("/userEmail/{email}")
-	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> getUserByEmail(@PathVariable String email) throws MessagingException {
-		return service.getUserByEmail(email);
+	@GetMapping("/users/{useremail}")
+	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> sendConfirmationEntityMail(@PathVariable String useremail) throws MessagingException {
+		return service.sendConfirmationEntityMail(useremail);
 	}
 
-	@DeleteMapping("/deleteuser/{email}")
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteByEmail(@PathVariable String email) {
-		return service.deleteByEmail(email);
+	@DeleteMapping("/users/{useremail}")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> deleteByEmail(@PathVariable String useremail) {
+		return service.deleteByEmail(useremail);
 	}
 
-	@PutMapping("/updateuser")
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateByEmail(
+	@PutMapping("/users")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> updateUser(
 			@RequestBody @Valid UserRequestDTO requestDTO) {
 		return service.updateByEmail(requestDTO);
 	}
 
-	@GetMapping("/fetchuser")
-	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findAllUser() {
-		return service.findAllUser();
+	@GetMapping("/users")
+	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> getAllUsers() {
+		return service.getAllUsers();
 	}
 	
-	@PatchMapping("/updatepassword/{email}/{pwd}/{confirmPwd}")
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> updatePassword(@PathVariable String email,@PathVariable String pwd, @PathVariable String confirmPwd ) {
-		return service.updatePassword(email,pwd,confirmPwd);
+	@PatchMapping("/users/reset/{email}/{pwd}")
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> resetPassword(@PathVariable String email,@PathVariable String pwd ) {
+		return service.resetPassword(email,pwd);
 	}
 }
