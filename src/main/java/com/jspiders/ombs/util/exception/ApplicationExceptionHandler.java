@@ -78,6 +78,16 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler
 		structure.setRootCause("user data does not updated");
 		return new ResponseEntity<ErrorStructure> (structure, HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure> ProductNotFoundException(ProductNotFoundException ex)
+	{
+		ErrorStructure structure = new ErrorStructure();
+		structure.setStatusCode(HttpStatus.NOT_FOUND.value());
+		structure.setMessage(ex.getMessage());
+		structure.setRootCause("product data does not exists");
+		return new ResponseEntity<ErrorStructure> (structure, HttpStatus.NOT_FOUND);
+	}
 
 
 }

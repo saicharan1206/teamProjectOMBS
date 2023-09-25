@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.engine.spi.Resolution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.repository.UserRoleRepo;
 import com.jspiders.ombs.service.UserService;
 import com.jspiders.ombs.util.ResponseStructure;
+import com.jspiders.ombs.util.exception.ProductNotFoundException;
 import com.jspiders.ombs.util.exception.UserAlreadyExistException;
 import com.jspiders.ombs.util.exception.UserDoesNotExistException;
 import com.jspiders.ombs.util.exception.UserNotFoundByIdException;
@@ -289,6 +291,81 @@ public class UserServiceImpl implements UserService {
 			return new ResponseEntity<ResponseStructure<ProductResponse>>(structure,HttpStatus.CREATED);
 			
 		}
-		return null;
+		else
+		{
+			throw new ProductNotFoundException("product does not exists");
+		}
+		
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<List<ProductResponse>>> findAllProducts() {
+		List<Product> list = productrepo.findAll();
+		List<ProductResponse> responseList = new ArrayList<>();
+		for (Product p : list) {
+			ProductResponse response = new ProductResponse();
+			response.setProductId(p.getProductId());
+			response.setProductName(p.getProductName());
+			response.setProductQuantity(p.getProductQuantity());
+			response.setProductPrice(p.getProductPrice());
+			responseList.add(response);
+		}
+
+		ResponseStructure<List<ProductResponse>> structure = new ResponseStructure();
+		structure.setStatusCode(HttpStatus.OK.value());
+		structure.setMessage("Product details fetech sucessfully");
+		structure.setData(responseList);
+		return new ResponseEntity<ResponseStructure<List<ProductResponse>>>(structure,HttpStatus.FOUND);
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(ProductRequest product, int productId) {
+		Optional<Product> optional = productrepo.findById(productId);
+		if (optional.isPresent()) {
+			Product product1 = new Product();
+			product1.setProductId(productId);
+			product1.setProductName(product.getProductName());
+			product1.setProductPrice(product.getProductPrice());
+			product1.setProductQuantity(product.getProductQuantity());
+
+		    product1 = productrepo.save(product1);
+
+			ProductResponse response = new ProductResponse();
+			response.setProductId(product1.getProductId());
+			response.setProductName(product1.getProductName());
+			response.setProductPrice(product1.getProductPrice());
+			response.setProductQuantity(product1.getProductQuantity());
+
+			ResponseStructure<ProductResponse> structure = new ResponseStructure<ProductResponse>();
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("product data Update sucessfully");
+			structure.setData(response);
+			return new ResponseEntity<ResponseStructure<ProductResponse>>(structure, HttpStatus.OK);
+		} 
+		else 
+		{
+			return null;
+		}
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponse>> deleteProduct(int productId) {
+		Optional<Product> optional = productrepo.findById(productId);
+		
+		Product product = optional.get();
+		
+		ProductResponse response = new ProductResponse();
+		response.setProductId(product.getProductId());
+		response.setProductName(product.getProductName());
+		response.setProductPrice(product.getProductPrice());
+		response.setProductQuantity(product.getProductQuantity());
+	
+		repo.deleteById(productId);
+		ResponseStructure<ProductResponse> structure = new ResponseStructure<ProductResponse>();
+		structure.setStatusCode(HttpStatus.OK.value());
+		structure.setMessage("product data deleted sucessfully");
+		structure.setData(response);
+	
+		return new ResponseEntity<ResponseStructure<ProductResponse>>(structure,HttpStatus.OK);
 	}
 }

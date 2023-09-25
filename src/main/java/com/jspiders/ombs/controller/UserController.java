@@ -82,6 +82,25 @@ public class UserController {
 		return service.saveProduct(product);
 	}
 	
-
+    @CrossOrigin
+	@GetMapping("/allproducts")
+	public ResponseEntity<ResponseStructure<List<ProductResponse>>> findAllProducts()
+	{
+		return service.findAllProducts();
+	}
+    
+    @CrossOrigin
+    @PutMapping("/updateproduct")
+    public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(ProductRequest product, int productId)
+    {
+    	return service.updateProduct(product, productId);
+    }
+    
+    @CrossOrigin
+    @DeleteMapping("/deleteproduct")
+    public ResponseEntity<ResponseStructure<ProductResponse>> deleteStudent(int productId)
+    {
+    	return service.deleteProduct(productId);
+    }
 	
 }

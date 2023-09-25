@@ -35,4 +35,11 @@ public interface UserService
 	
 	public ResponseEntity<ResponseStructure<ProductResponse>> saveProduct(ProductRequest product);
 	
+	public ResponseEntity<ResponseStructure<List<ProductResponse>>> findAllProducts();
+	
+	public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(ProductRequest product, int productId);
+	
+	public ResponseEntity<ResponseStructure<ProductResponse>> deleteProduct(int productId);
+	
+	
 }
