@@ -8,4 +8,5 @@ public class ProductResponseDTO {
 	private int productID;
 	private String productName;
 	private double productPrice;
+	private int productQuantity;
 }

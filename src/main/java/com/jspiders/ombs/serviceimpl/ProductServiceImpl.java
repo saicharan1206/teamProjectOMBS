@@ -12,10 +12,13 @@ import org.springframework.stereotype.Service;
 import com.jspiders.ombs.dto.ProductRequestDTO;
 import com.jspiders.ombs.dto.ProductResponseDTO;
 import com.jspiders.ombs.entity.Product;
+import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.repository.ProductRepository;
+import com.jspiders.ombs.repository.UserRepository;
 import com.jspiders.ombs.service.ProductService;
 import com.jspiders.ombs.util.ResponseStructure;
 import com.jspiders.ombs.util.exception.ProdcutNotFoundException;
+import com.jspiders.ombs.util.exception.UserNotFoundException;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -23,24 +26,39 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	ProductRepository productRepository;
 	
+	@Autowired
+	UserRepository repo;
+	
 	@Override
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(ProductRequestDTO request) {
-		Product product = new Product();
-		product.setProductName(request.getProductName());
-		product.setProductPrice(request.getProductPrice());
-		product.setProductQuantity(request.getProductQuantityl());
-		Product save = productRepository.save(product);
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(int userid,  ProductRequestDTO request) {
+	
+		Optional<User> findById = repo.findById(userid);
 		
-		ProductResponseDTO response = new ProductResponseDTO();
-		response.setProductName(save.getProductName());
-		response.setProductPrice(save.getProductPrice());
-		response.setProductID(save.getProductId());
+		if(findById.isPresent()) {
+			Product product = new Product();
+			product.setProductName(request.getProductName());
+			product.setProductPrice(request.getProductPrice());
+			product.setProductQuantity(request.getProductQuantityl());
+			product.setUser(findById.get());
+			Product save = productRepository.save(product);
+			
+			
+			
+			ProductResponseDTO response = new ProductResponseDTO();
+			response.setProductName(save.getProductName());
+			response.setProductPrice(save.getProductPrice());
+			response.setProductQuantity(save.getProductQuantity());
+			response.setProductID(save.getProductId());
+			
+			ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
+			responseStructure.setData(response);
+			responseStructure.setMessage("product created sucessuffly");
+			responseStructure.setStatusCode(HttpStatus.CREATED.value());
+			return new ResponseEntity(responseStructure, HttpStatus.CREATED);
+		}
+		throw new UserNotFoundException("no user with this id");
 		
-		ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
-		responseStructure.setData(response);
-		responseStructure.setMessage("product created sucessuffly");
-		responseStructure.setStatusCode(HttpStatus.CREATED.value());
-		return new ResponseEntity(responseStructure, HttpStatus.CREATED);
+		
 	}
 
 	@Override
@@ -56,6 +74,7 @@ public class ProductServiceImpl implements ProductService {
 			ProductResponseDTO response = new ProductResponseDTO();
 			response.setProductName(save.getProductName());
 			response.setProductPrice(save.getProductPrice());
+			response.setProductQuantity(save.getProductQuantity());
 			response.setProductID(save.getProductId());
 			
 			ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
@@ -69,15 +88,20 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> products() {
-		List<Product> allProduct = productRepository.findAll();
+	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> products(int userid) {
+		Optional<User> findById = repo.findById(userid);
+		if(findById.isPresent()) {
+			
+		
+		List<Product> products = findById.get().getProducts();
 		List<ProductResponseDTO> allprodcuts = new ArrayList<>();
-		if(!allProduct.isEmpty()) {
-			for (Product product : allProduct) {
+		if(!products.isEmpty()) {
+			for (Product product : products) {
 				ProductResponseDTO response = new ProductResponseDTO();
 				response.setProductName(product.getProductName());
 				response.setProductPrice(product.getProductPrice());
 				response.setProductID(product.getProductId());
+				response.setProductQuantity(product.getProductQuantity());
 				allprodcuts.add(response);
 			}
 			ResponseStructure<List<ProductResponseDTO>> responseStructure = new ResponseStructure<>();
@@ -88,30 +112,36 @@ public class ProductServiceImpl implements ProductService {
 			
 			return new ResponseEntity(responseStructure, HttpStatus.OK);
 		}
+	}
 		throw new ProdcutNotFoundException("data base is empty");
 		
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(int prodcutid) {
-		
-		Optional<Product> product = productRepository.findById(prodcutid);
-		if(product.isPresent()) {
-			productRepository.delete(product.get());
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(int prodcutid, int userid) {
+		Optional<User> findById = repo.findById(userid);
+		if(findById.get().getRole().getRole().equals("admin")){
 			
-			ProductResponseDTO response = new ProductResponseDTO();
-			response.setProductName(product.get().getProductName());
-			response.setProductPrice(product.get().getProductPrice());
-			response.setProductID(product.get().getProductId());
-			
-			
-			ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
-			responseStructure.setData(response);
-			responseStructure.setStatusCode(HttpStatus.OK.value());
-			responseStructure.setMessage("deleted sucessfully");
-			
-			return new ResponseEntity(responseStructure, HttpStatus.OK);
+			Optional<Product> product = productRepository.findById(prodcutid);
+			if(product.isPresent()) {
+				productRepository.delete(product.get());
+				
+				ProductResponseDTO response = new ProductResponseDTO();
+				response.setProductName(product.get().getProductName());
+				response.setProductPrice(product.get().getProductPrice());
+				response.setProductID(product.get().getProductId());
+				
+				
+				ResponseStructure<ProductResponseDTO> responseStructure = new ResponseStructure<>();
+				responseStructure.setData(response);
+				responseStructure.setStatusCode(HttpStatus.OK.value());
+				responseStructure.setMessage("deleted sucessfully");
+				
+				return new ResponseEntity(responseStructure, HttpStatus.OK);
+			}
 		}
+		
+		
 		throw new ProdcutNotFoundException("product not found"); 
 		
 	}

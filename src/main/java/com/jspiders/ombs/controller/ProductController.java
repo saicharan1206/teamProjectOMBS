@@ -1,5 +1,7 @@
 package com.jspiders.ombs.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jspiders.ombs.dto.ProductRequestDTO;
@@ -23,9 +26,9 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
-	@PostMapping("/addproduct")
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> addProduct(@RequestBody ProductRequestDTO request){
-		return productService.addProduct(request);
+	@PostMapping("/users/{userid}/product")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(@PathVariable int userid,   @RequestBody ProductRequestDTO request){
+		return productService.saveProduct(userid,request);
 	}
 	
 	@PutMapping("/products/{prodcutid}/update")
@@ -33,13 +36,13 @@ public class ProductController {
 		return productService.updateProduct(request,prodcutid);
 	}
 	
-	@GetMapping("/products")
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> products(){
-		return productService.products();
+	@GetMapping("users/{userid}/products")
+	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> products(@PathVariable int userid){
+		return productService.products(userid);
 	}
 	
-	@DeleteMapping("/products/{prodcutid}/delete")
-	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(@PathVariable int prodcutid){
-		return productService.deleteProduct(prodcutid);
+	@DeleteMapping("users/{userid}/products/{prodcutid}/delete")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(@PathVariable int userid,@PathVariable int prodcutid){
+		return productService.deleteProduct(userid,prodcutid);
 	}
 }

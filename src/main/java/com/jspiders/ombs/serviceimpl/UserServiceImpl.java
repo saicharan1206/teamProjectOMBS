@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.jspiders.ombs.dto.ForgotEmailResponse;
+import com.jspiders.ombs.dto.LoginDTO;
 import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.dto.UserResponseDTO;
 import com.jspiders.ombs.entity.User;
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(UserRequestDTO request) {
 		UserRole role = repository.findByRole(request.getRole());
-
+		User findByUserEmail = repo.findByUserEmail(request.getUserEmail());
 		UserRole role2 = null;
 		if (role == null) {
 			role2 = new UserRole();
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
 			role = role2;
 		}
 		User save = null;
-		try {
+		if(findByUserEmail == null) {
 			User user = new User();
 			user.setUserEmail(request.getUserEmail().toLowerCase());
 			user.setUserPassword(request.getUserPassword());
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
 			
 			
 
-		} catch (Exception e) {
+		} else {
 			throw new UserAlreadyExist("user already exits");
 		}
 		
@@ -99,9 +100,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUser(String email, String password) {
-		User user = repo.findByUserEmail(email);
-		if (user != null && user.getUserPassword().equals(password)) {
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> getUserByEmailByPassword(LoginDTO login) {
+		User user = repo.findByUserEmail(login.getUserEmail());
+		if (user != null && user.getUserPassword().equals(login.getUserPassword())) {
 			UserResponseDTO response = new UserResponseDTO();
 			response.setUserId(user.getUserId());
 			response.setCreatedBy(user.getCreatedBy());
@@ -124,7 +125,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> sendforgotemail(String email) throws MessagingException {
+	public ResponseEntity<ResponseStructure<ForgotEmailResponse>> sendConfirmationMail(String email) throws MessagingException {
 		User userEmail = repo.findByUserEmail(email);
 		if(userEmail !=null) {
 //			SimpleMailMessage message = new SimpleMailMessage();
@@ -156,6 +157,7 @@ public class UserServiceImpl implements UserService {
 			
 			ResponseStructure<ForgotEmailResponse> responseStructure = new ResponseStructure<>();
 			responseStructure.setData(emailResponse);
+			responseStructure.setMessage("confirmation mail sent sucessfully");
 			responseStructure.setStatusCode(HttpStatus.OK.value());
 			return new ResponseEntity(responseStructure, HttpStatus.OK);
 		}
@@ -182,7 +184,7 @@ public class UserServiceImpl implements UserService {
 		
 			ResponseStructure<UserResponseDTO> responseStructure = new ResponseStructure<>();
 			responseStructure.setData(response);
-			responseStructure.setMessage("found sucesfull");
+			responseStructure.setMessage("deleted sucessfuly");
 			responseStructure.setStatusCode(HttpStatus.FOUND.value());
 
 			return new ResponseEntity(responseStructure, HttpStatus.FOUND);
@@ -221,7 +223,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> findall() {
+	public ResponseEntity<ResponseStructure<List<UserResponseDTO>>> getAllUsers() {
 		List<User> allUser = repo.findAll();
 		List<UserResponseDTO> users = new ArrayList<>();
 		if(!allUser.isEmpty()) {
@@ -250,20 +252,14 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> updatePassword(String password, String confirmpassword,
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> restPassword(String password,
 			String email) {
 		User user = repo.findByUserEmail(email.toLowerCase());
 		if(user!=null) {
 			
-		
-		if(password.equals(confirmpassword)) {
-			user.setUserPassword(confirmpassword);
+			user.setUserPassword(password);
 			repo.save(user);
-			
-		}
-		else {
-			throw new PasswordMissMatch("incorrect password");
-		}
+		
 			UserResponseDTO response = new UserResponseDTO();
 			response.setUserId(user.getUserId());
 			response.setCreatedBy(user.getCreatedBy());
