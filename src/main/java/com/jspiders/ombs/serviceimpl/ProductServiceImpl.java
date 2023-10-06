@@ -129,4 +129,60 @@ public class ProductServiceImpl implements ProductService {
 		throw new UserNotFoundException("user id not found!!");
 	}
 
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> findallproducts() {
+		List<Product> findallproducts = repo.findAll();
+		
+		List<ProductResponseDTO> responseDtos = new ArrayList<>();
+		if(!findallproducts.isEmpty()) {
+			for (Product product : findallproducts) {
+				ProductResponseDTO dto = new ProductResponseDTO();
+				dto.setProductId(product.getProductId());
+				dto.setProductName(product.getProductName());
+				dto.setProductPrice(product.getProductPrice());
+				dto.setProductQuantity(product.getProductQuantity());
+				
+				responseDtos.add(dto);
+			}
+			
+			ResponseStructure<List<ProductResponseDTO>> responseStructure = new ResponseStructure<>();
+			responseStructure.setData(responseDtos);
+			responseStructure.setMessage("Product deleted successfully!!");
+			responseStructure.setStatusCode(HttpStatus.ACCEPTED.value());
+			return new ResponseEntity(responseStructure, HttpStatus.FOUND);
+		}
+		throw new UserNotFoundException("user id not found!!");
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteAllProducts(int[] productid) {
+		
+		List<ProductResponseDTO> dtos = new ArrayList<>();
+		for (int i : productid) {
+			Optional<Product> findById = repo.findById(i);
+			if(findById.isPresent()) {
+				repo.delete(findById.get());
+				ProductResponseDTO dto = new ProductResponseDTO();
+				dto.setProductId(findById.get().getProductId());
+				dto.setProductName(findById.get().getProductName());
+				dto.setProductPrice(findById.get().getProductPrice());
+				dto.setProductQuantity(findById.get().getProductQuantity());
+				
+				dtos.add(dto);
+				
+			}
+			else {
+				throw new UserNotFoundException("user id not found!!");
+			}
+		}
+		
+		ResponseStructure<List<ProductResponseDTO>> responseStructure = new ResponseStructure<>();
+		responseStructure.setData(dtos);
+		responseStructure.setMessage("Product deleted successfully!!");
+		responseStructure.setStatusCode(HttpStatus.OK.value());
+		return new ResponseEntity(responseStructure, HttpStatus.OK);
+		
+	}
+
+	
 }

@@ -18,4 +18,8 @@ public interface ProductService {
 
 	ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(int userid, int productid);
 
+	ResponseEntity<ResponseStructure<ProductResponseDTO>> findallproducts();
+
+	ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteAllProducts(int[] productid);
+
 }

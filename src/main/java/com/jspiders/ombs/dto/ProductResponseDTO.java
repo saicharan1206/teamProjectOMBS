@@ -9,4 +9,5 @@ public class ProductResponseDTO extends Auditing{
 	private int productId;
 	private String productName;
 	private double productPrice;
+	private int productQuantity;
 }

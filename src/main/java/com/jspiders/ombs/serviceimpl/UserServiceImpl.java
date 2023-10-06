@@ -67,8 +67,7 @@ public class UserServiceImpl implements UserService {
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(user.getUserEmail());
 		message.setSubject("Account created successfully ");
-		message.setText("Account has been created as " + user.getRole().getUserRole() + "\n\nThanks & Regards" + "\n"
-				+ user.getCreatedBy() + "\n");
+		message.setText("Account has been created as " + user.getRole().getUserRole() +"\n\nThanks & Regards" + "\n"+ user.getCreatedBy() + "\n");
 		message.setSentDate(new Date());
 		javaMailSender.send(message);
 

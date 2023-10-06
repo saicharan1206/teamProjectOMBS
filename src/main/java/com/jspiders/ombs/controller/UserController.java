@@ -32,7 +32,8 @@ public class UserController {
 	private UserService service;
 
 	@PostMapping("/users")
-	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@RequestBody @Valid UserRequestDTO requestDTO) {
+	public ResponseEntity<ResponseStructure<UserResponseDTO>> 
+	saveUser(@RequestBody @Valid UserRequestDTO requestDTO) {
 		return service.saveUser(requestDTO);
 	}
 

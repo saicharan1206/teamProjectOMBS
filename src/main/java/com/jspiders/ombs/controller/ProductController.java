@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jspiders.ombs.dto.ProductRequestDTO;
@@ -45,4 +46,16 @@ public class ProductController {
 	{
 		return service.deleteProduct(userid,productid);
 	}
+	@GetMapping("/products")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> findallproducts()
+	{
+		return service.findallproducts();
+	}
+	@DeleteMapping("/products")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteAllProducts(@RequestParam int[] productid)
+	{
+		return service.deleteAllProducts(productid);
+	}
+	
+	
 }
