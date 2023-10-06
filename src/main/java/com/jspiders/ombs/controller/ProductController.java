@@ -45,4 +45,15 @@ public class ProductController {
 	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteProduct(@PathVariable int userid,@PathVariable int prodcutid){
 		return productService.deleteProduct(userid,prodcutid);
 	}
+	
+	@GetMapping("/products")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> allProducts(){
+		return productService.allProducts();
+	}
+	
+	@DeleteMapping("/products")
+	public ResponseEntity<ResponseStructure<ProductResponseDTO>> deleteAllProducts(@RequestParam int[] productid){
+		return productService.deleteAllProducts(productid);
+	}
+	
 }
