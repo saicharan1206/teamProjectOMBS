@@ -2,7 +2,7 @@ package com.jspiders.ombs.dto;
 
 import java.util.Date;
 
-
+import com.jspiders.ombs.entity.UserRole;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +16,7 @@ public class UserRequestDTO {
 	private String userFirstName;
 	@NotBlank(message = "UserLastName is required")
 	private String userLastName;
-	@NotBlank(message = "UserRole is required")
+//	@NotBlank(message = "UserRole is required")
 	private String userRole;
 	/*
 	 * @NotBlank is used to not to accept blank date in email id field
@@ -60,6 +60,8 @@ public class UserRequestDTO {
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
+	
+	
 	
 	
 	
