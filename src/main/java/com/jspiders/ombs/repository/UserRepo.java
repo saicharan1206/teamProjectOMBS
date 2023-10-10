@@ -1,13 +1,16 @@
 package com.jspiders.ombs.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 
-import com.jspiders.ombs.dto.UserRequestDTO;
 import com.jspiders.ombs.entity.User;
 import com.jspiders.ombs.entity.UserRole;
-import com.jspiders.ombs.util.ResponseStructure;
+
+import org.springframework.transaction.annotation.Transactional;
 
 
 public interface UserRepo extends JpaRepository<User, Integer> {
@@ -17,6 +20,6 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 	
 	public User findByEmail(String email);
 
-	public UserRole save(UserRole role);
-
+	public List<User> findByUserRole(UserRole role);
+	
 }

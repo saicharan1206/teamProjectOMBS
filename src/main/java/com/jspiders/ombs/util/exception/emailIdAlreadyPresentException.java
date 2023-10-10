@@ -1,15 +1,10 @@
 package com.jspiders.ombs.util.exception;
 
+import lombok.Data;
+
+@Data
 public class emailIdAlreadyPresentException extends RuntimeException {
 	private String message;
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
 
 	public emailIdAlreadyPresentException(String message) {
 		super();

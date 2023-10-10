@@ -1,5 +1,8 @@
 package com.jspiders.ombs.dto;
 
+import lombok.Data;
+
+@Data
 public class MessageData {
 	
 	private String to;
@@ -7,37 +10,5 @@ public class MessageData {
 	private String text;
 	private String senderName;
 	private String senderAddress;
-	
-	public String getTo() {
-		return to;
-	}
-	public String setTo(String to) {
-		return this.to = to;
-	}
-	public String getSubject() {
-		return subject;
-	}
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-	public String getText() {
-		return text;
-	}
-	public void setText(String text) {
-		this.text = text;
-	}
-	public String getSenderName() {
-		return senderName;
-	}
-	public void setSenderName(String senderName) {
-		this.senderName = senderName;
-	}
-	public String getSenderAddress() {
-		return senderAddress;
-	}
-	public void setSenderAddress(String senderAddress) {
-		this.senderAddress = senderAddress;
-	}
-	
 	
 }
