@@ -321,8 +321,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(ProductRequest product, int productId) {
 		Optional<Product> optional = productrepo.findById(productId);
-		if (optional.isPresent()) {
-			Product product1 = new Product();
+		Product product1 = optional.get();
+		if (product1!=null) 
+		{
 			product1.setProductId(productId);
 			product1.setProductName(product.getProductName());
 			product1.setProductPrice(product.getProductPrice());
@@ -337,10 +338,10 @@ public class UserServiceImpl implements UserService {
 			response.setProductQuantity(product1.getProductQuantity());
 
 			ResponseStructure<ProductResponse> structure = new ResponseStructure<ProductResponse>();
-			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setStatusCode(HttpStatus.CREATED.value());
 			structure.setMessage("product data Update sucessfully");
 			structure.setData(response);
-			return new ResponseEntity<ResponseStructure<ProductResponse>>(structure, HttpStatus.OK);
+			return new ResponseEntity<ResponseStructure<ProductResponse>>(structure, HttpStatus.CREATED);
 		} 
 		else 
 		{
@@ -351,21 +352,49 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<ResponseStructure<ProductResponse>> deleteProduct(int productId) {
 		Optional<Product> optional = productrepo.findById(productId);
-		
 		Product product = optional.get();
-		
+		if(product!=null)
+		{
 		ProductResponse response = new ProductResponse();
-		response.setProductId(product.getProductId());
+		response.setProductId(productId);
 		response.setProductName(product.getProductName());
 		response.setProductPrice(product.getProductPrice());
 		response.setProductQuantity(product.getProductQuantity());
 	
-		repo.deleteById(productId);
+		productrepo.deleteById(productId);
 		ResponseStructure<ProductResponse> structure = new ResponseStructure<ProductResponse>();
 		structure.setStatusCode(HttpStatus.OK.value());
 		structure.setMessage("product data deleted sucessfully");
 		structure.setData(response);
 	
 		return new ResponseEntity<ResponseStructure<ProductResponse>>(structure,HttpStatus.OK);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<ProductResponse>> findByIdProduct(int productId) {
+		Optional<Product> optional = productrepo.findById(productId);
+		if(optional.isPresent())
+		{
+            Product product = optional.get();
+			ProductResponse response = new ProductResponse();
+			response.setProductId(product.getProductId());
+			response.setProductName(product.getProductName());
+			response.setProductPrice(product.getProductPrice());
+			response.setProductQuantity(product.getProductQuantity());
+		
+			ResponseStructure<ProductResponse> structure = new ResponseStructure<ProductResponse>();
+			structure.setStatusCode(HttpStatus.OK.value());
+			structure.setMessage("Student data feteched sucessfully");
+			structure.setData(response);
+			return new  ResponseEntity<ResponseStructure<ProductResponse>> (structure, HttpStatus.FOUND);
+		}
+		else {
+		return null;
+		}
 	}
 }

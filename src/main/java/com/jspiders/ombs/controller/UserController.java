@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +30,6 @@ import jakarta.validation.Valid;
 
 
 @RestController
-
 @RequestMapping("/users")
 public class UserController {
 	@Autowired
@@ -75,32 +75,39 @@ public class UserController {
 		return service.resetPassword(userEmail, newPassword, confirmPassword);
 	}
 	
-	@CrossOrigin
+	@CrossOrigin("*")
 	@PostMapping("/products")
 	public ResponseEntity<ResponseStructure<ProductResponse>> saveProduct(@RequestBody ProductRequest product)
 	{
 		return service.saveProduct(product);
 	}
 	
-    @CrossOrigin
+    @CrossOrigin()
 	@GetMapping("/allproducts")
 	public ResponseEntity<ResponseStructure<List<ProductResponse>>> findAllProducts()
 	{
 		return service.findAllProducts();
 	}
     
-    @CrossOrigin
-    @PutMapping("/updateproduct")
-    public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(ProductRequest product, int productId)
+    @CrossOrigin("*")
+    @PutMapping("/updateproduct/{productId}")
+    public ResponseEntity<ResponseStructure<ProductResponse>> updateProduct(@RequestBody ProductRequest product,@PathVariable int productId)
     {
     	return service.updateProduct(product, productId);
     }
     
-    @CrossOrigin
-    @DeleteMapping("/deleteproduct")
-    public ResponseEntity<ResponseStructure<ProductResponse>> deleteStudent(int productId)
+    @CrossOrigin("*")
+    @DeleteMapping("/deleteproduct/{productId}")
+    public ResponseEntity<ResponseStructure<ProductResponse>> deleteStudent(@PathVariable int productId)
     {
     	return service.deleteProduct(productId);
+    }
+    
+     @CrossOrigin("*")
+    @GetMapping("/findById/{productId}")
+    public ResponseEntity<ResponseStructure<ProductResponse>> findByIdProduct(@PathVariable int productId)
+    {
+    	return service.findByIdProduct(productId);
     }
 	
 }

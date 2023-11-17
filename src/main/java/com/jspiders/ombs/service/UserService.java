@@ -41,5 +41,7 @@ public interface UserService
 	
 	public ResponseEntity<ResponseStructure<ProductResponse>> deleteProduct(int productId);
 	
+	public ResponseEntity<ResponseStructure<ProductResponse>> findByIdProduct(int productId);
+	
 	
 }
