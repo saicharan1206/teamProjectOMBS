@@ -34,6 +34,9 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,7 +71,7 @@ public class UserServiceImpl implements UserService {
 		String email=userRequestDTO.getUserEmail().toLowerCase();
 		User user1 = userRepo.findByUserEmail(email);
 		User_Role userRole = new User_Role();
-		
+		System.out.println("wwwwwwwwwwww");
 		if (user1==null) {
 			userRole = user_Role_Repository.findByUserRoleName(userRequestDTO.getUserRole());
 			
@@ -100,7 +103,7 @@ public class UserServiceImpl implements UserService {
 			respone.setUserLastName(user.getUserLastName());
 			
 			ResponseStructure<UserResponseDTO> structure = new ResponseStructure<UserResponseDTO>();
-			structure.setStatusCode(HttpStatus.CREATED.value());
+			structure.setStatusCode(HttpStatus.OK.value());
 			structure.setMessage("User data inserted Successfully!!!");
 			structure.setData(respone);
 			
@@ -123,10 +126,10 @@ public class UserServiceImpl implements UserService {
 			
 //	===========================================================================	
 			
-			return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure,HttpStatus.CREATED);
+			return new ResponseEntity<ResponseStructure<UserResponseDTO>>(structure,HttpStatus.OK);
 		}
 		else
-			throw new EmailAlreadyExistException(email+" This Email already exists!!!");
+			throw new EmailAlreadyExistException(email+" for this Email data did't saved!!!");
 			
 	}
 
@@ -231,6 +234,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		throw new UserNotFoundByEmailException(userEmail+" this email not found in cookie, user name did't updated!!");
+		
 	}
 	
 	@Override
@@ -363,10 +367,12 @@ public class UserServiceImpl implements UserService {
 	public ResponseEntity<ResponseStructure<ProductResponseDTO>> saveProduct(HttpServletRequest request, ProductRequestDTO productRequestDTO) {
 		Cookie[] cookies = request.getCookies();
 		String userEmail = null;
+		
 		if(cookies!=null) {
 			for (Cookie cookie:cookies) {
 				if("userEmail".equals(cookie.getName())) {
 					userEmail = cookie.getValue();
+//					int i=Integer.parseInt(userEmail);					
 					User user= userRepo.findByUserEmail(userEmail);
 					String userRoleName = user.getUserRole().getUserRoleName();
 					if(userRoleName.equals("Admin")) {
@@ -497,6 +503,60 @@ public class UserServiceImpl implements UserService {
 		throw new ProductNotFoundException("Products List is empty, Please add products!!!");
 	}
 
+	
+	//---------------------
+	@Override
+	public ResponseEntity<ResponseStructure<String>> forgotPasswordValidation(String userEmail)
+			throws MessagingException {
+
+		String email = userRepo.getUserEmailByEmail(userEmail);
+//		System.out.println(email+" eeeeeeeeeeee");
+		MimeMessage mime = javaMailSender.createMimeMessage();
+		MimeMessageHelper message = new MimeMessageHelper(mime, true);
+		ResponseStructure<String> structure = new ResponseStructure<>();
+		if (email != null) {
+			
+			message.setTo(email);
+			message.setSubject("ITS A VALID EMAIL");
+			String messageBody = "<a href='http://127.0.0.1:5502/SBProject/CreateNewPassword.html'>Link</a>";
+			message.setText(messageBody, true);
+			message.setSentDate(new Date());
+			javaMailSender.send(mime);
+			structure.setData(email);
+			structure.setMessage("GOT TO YOUR EMAIL TO RESET YOR PASSWORD");		
+			structure.setStatusCode(HttpStatus.OK.value());
+
+			return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.OK);
+		} else {
+			throw new UserNotFoundByEmailException(userEmail+" is invalid, Please enter valid Email!!!"); 
+
+		}
+	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<String>> updatePassword(String newPassword,String userEmail) {
+//		System.out.println(userEmail+" eeeeeeee");
+		User user = userRepo.findByUserEmail(userEmail);
+		if(user!=null) {
+			if (newPassword.length()>=6) {
+				System.out.println(newPassword.length()+" p111ppp11");
+				user.setUserPassword(newPassword);
+				userRepo.save(user);
+				ResponseStructure<String> structure = new ResponseStructure<>();
+				structure.setStatusCode(HttpStatus.OK.value());
+				structure.setMessage("New Password created!!");
+				structure.setData("Password changed successfully!!!");
+				return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.OK);
+			} 
+			else {
+				System.out.println(newPassword.length()+" p111ppp222");
+				throw new IncorrectPasswordException("Please enter valid password!!!");
+			}
+			
+		}
+		System.out.println(newPassword+" p111ppp222");
+		throw new UserEmailNotFoundInCookieException(userEmail+" this email is not present in cookie!!!");
+	}
 	
 }
 

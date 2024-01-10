@@ -62,6 +62,14 @@ public interface UserService {
 	/** Get List of Products */
 	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> getAllProducts();
 	
+	/** Send mail to change password & used the cookie in front end side */
+	public ResponseEntity<ResponseStructure<String>> forgotPasswordValidation(String userEmail) throws MessagingException;
+	
+	/** THIS METHOD IS TO UPDATE THE USER PASSWORD */
+	public ResponseEntity<ResponseStructure<String>> updatePassword(String newPassword,String userEmail);
+	
+	
 	
 }
+
 

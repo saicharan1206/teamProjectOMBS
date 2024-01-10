@@ -43,7 +43,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		ErrorStructure structure = new ErrorStructure();
 		structure.setStatusCode(HttpStatus.FOUND.value());
 		structure.setMessage(exc.getMessage());
-		structure.setRootCause("This Email Aready found!!!");
+		structure.setRootCause("This Email Aready Exist!!!");
 		return new ResponseEntity<ErrorStructure>(structure,HttpStatus.FOUND);
 	}
 	

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,19 +26,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+@CrossOrigin
 @RestController
 public class UserController {
 	
 	@Autowired
 	private UserService userService;
 	
-	@CrossOrigin
 	@PostMapping("/users")
 	public ResponseEntity<ResponseStructure<UserResponseDTO>> saveUser(@RequestBody @Valid UserRequestDTO userRequestDTO) throws MessagingException{
 		return userService.saveUser(userRequestDTO);
 	}
 	
-	@CrossOrigin
 //	@PostMapping("/login") // for UI
 	@PostMapping("/users/login1")
 	public ResponseEntity<ResponseStructure<String>> login1(@RequestParam String email, String password){
@@ -56,7 +54,6 @@ public class UserController {
 		return userService.updateuserName(request, name);
 	}
 	
-	@CrossOrigin
 	@PostMapping("/users/{userEmail}/sendMail")
 	public ResponseEntity<String> sendMailToChangePwd(@PathVariable String userEmail) throws MessagingException{
 		return userService.sendMailToChangePassword(userEmail);
@@ -107,6 +104,18 @@ public class UserController {
 	@GetMapping("/products")
 	public ResponseEntity<ResponseStructure<List<ProductResponseDTO>>> getAllProducts(){
 		return userService.getAllProducts();
+	}
+	
+	//-------------------
+	@PostMapping("/users/{userEmail}")
+	public ResponseEntity<ResponseStructure<String>> forgotPasswordValidation(@PathVariable String userEmail) throws MessagingException {
+		return userService.forgotPasswordValidation(userEmail);
+	}
+	
+	@PutMapping("/users/{userPassword}/{userEmail}")
+	public ResponseEntity<ResponseStructure<String>> updatePassword(@PathVariable("userPassword") String userPassword,@PathVariable String userEmail) {
+//		System.out.println("hiii");
+		return userService.updatePassword(userPassword,userEmail);
 	}
 	
 }
